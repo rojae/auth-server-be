@@ -1,4 +1,4 @@
-package io.github.rojae.authserver.oauth.nonsocial;
+package io.github.rojae.authserver.oauth.login.nonsocial;
 
 import io.github.rojae.authserver.common.enums.PlatformType;
 import io.github.rojae.authserver.common.jwt.JwtProvider;

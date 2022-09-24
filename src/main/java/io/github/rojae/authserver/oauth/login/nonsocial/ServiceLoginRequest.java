@@ -1,4 +1,4 @@
-package io.github.rojae.authserver.oauth.nonsocial;
+package io.github.rojae.authserver.oauth.login.nonsocial;
 
 public class ServiceLoginRequest {
     private String email;

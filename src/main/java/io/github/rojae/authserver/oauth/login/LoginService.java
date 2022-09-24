@@ -1,4 +1,6 @@
-package io.github.rojae.authserver.oauth;
+package io.github.rojae.authserver.oauth.login;
+
+import io.github.rojae.authserver.oauth.OAuth2Principal;
 
 public interface LoginService {
 

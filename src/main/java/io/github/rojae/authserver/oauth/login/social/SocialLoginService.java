@@ -1,6 +1,6 @@
-package io.github.rojae.authserver.oauth.social;
+package io.github.rojae.authserver.oauth.login.social;
 
-import io.github.rojae.authserver.oauth.LoginService;
+import io.github.rojae.authserver.oauth.login.LoginService;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 
 public interface SocialLoginService extends LoginService {

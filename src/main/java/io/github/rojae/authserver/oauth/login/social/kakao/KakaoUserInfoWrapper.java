@@ -1,4 +1,4 @@
-package io.github.rojae.authserver.oauth.social.kakao;
+package io.github.rojae.authserver.oauth.login.social.kakao;
 
 import java.util.Date;
 

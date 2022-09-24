@@ -1,4 +1,4 @@
-package io.github.rojae.authserver.oauth.social;
+package io.github.rojae.authserver.oauth.login.social;
 
 import io.github.rojae.authserver.common.jwt.JwtProvider;
 import io.github.rojae.authserver.common.props.OAuth2Props;

@@ -1,4 +1,4 @@
-package io.github.rojae.authserver.oauth.social.kakao;
+package io.github.rojae.authserver.oauth.login.social.kakao;
 
 import io.github.rojae.authserver.common.enums.PlatformType;
 import io.github.rojae.authserver.common.http.HttpHeader;
@@ -8,7 +8,7 @@ import io.github.rojae.authserver.common.props.OAuth2Props;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponseBuilder;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
-import io.github.rojae.authserver.oauth.social.SocialLoginServiceImpl;
+import io.github.rojae.authserver.oauth.login.social.SocialLoginServiceImpl;
 import io.github.rojae.authserver.persistence.AccountRedisRepository;
 import io.github.rojae.authserver.persistence.AccountRepository;
 import io.github.rojae.authserver.util.TimeUtils;
