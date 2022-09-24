@@ -11,3 +11,12 @@
 
 ## Tech
 - H2, JWT, Spring Security, Redis Server ...
+
+### 2022.09.24
+- ADD :: Test User 
+```json
+{
+    "email": "rojae@test.com",
+    "password": "password"
+}
+```
