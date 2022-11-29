@@ -1,9 +1,9 @@
-package io.github.rojae.authserver;
+package io.github.rojae.authserver.controller;
 
 import io.github.rojae.authserver.common.props.JwtProps;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.login.nonsocial.NonSocialLoginService;
-import io.github.rojae.authserver.oauth.login.nonsocial.ServiceLoginRequest;
+import io.github.rojae.authserver.dto.ServiceLoginRequest;
 import io.github.rojae.authserver.oauth.logout.LogoutService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package io.github.rojae.authserver;
+package io.github.rojae.authserver.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
