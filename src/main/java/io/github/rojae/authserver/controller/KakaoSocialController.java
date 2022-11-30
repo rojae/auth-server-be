@@ -9,10 +9,14 @@ import io.github.rojae.authserver.oauth.login.social.kakao.KakaoService;
 import io.github.rojae.authserver.oauth.logout.LogoutService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotBlank;
+
+@Validated
 @RestController
 public class KakaoSocialController {
 
@@ -47,14 +51,14 @@ public class KakaoSocialController {
     }
 
     // 카카오 브라우저 로그인 이후, 카카오 인증서버에서 전송되는 API
-    @GetMapping("/login/oauth2/social/kakao")
-    public ResponseEntity<OAuth2LoginResponse> login(@RequestParam(value = "code", required = true) String code){
+    @GetMapping("/login/oauth2/social/kakao-callback")
+    public ResponseEntity<OAuth2LoginResponse> login(@RequestParam(value = "code") @NotBlank(message = "code cannot be empty value") String code ){
         OAuth2LoginResponse response = kakaoService.login(code);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 카카오 브라우저 로그아웃을 위해서는, 브라우저 이동이 필요. 호출 정보 API
-    @GetMapping("/login/oauth2/kakao/logout")
+    @GetMapping("/login/oauth2/social/kakao-logout")
     public ResponseEntity<KakaoLogoutInfoResponse> logout(){
         KakaoLogoutInfoResponse response = new KakaoLogoutInfoResponse(oAuth2Props.logoutUri,
                 oAuth2Props.kakaoClientId,

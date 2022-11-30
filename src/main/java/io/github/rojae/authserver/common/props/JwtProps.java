@@ -8,6 +8,7 @@ public class JwtProps {
 
     @Value("${oauth2.header.name}")
     public String jwtHeaderName;
+    public static final String AUTHORIZATION_HEADER = "Authorization";
 
     @Value("${oauth2.jwt.issuer}")
     public String jwtIssuer;

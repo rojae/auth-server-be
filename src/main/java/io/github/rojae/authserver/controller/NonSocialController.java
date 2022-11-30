@@ -7,16 +7,14 @@ import io.github.rojae.authserver.dto.ServiceLoginRequest;
 import io.github.rojae.authserver.oauth.logout.LogoutService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 
+@Validated
 @RestController
 public class NonSocialController {
-
     private final NonSocialLoginService nonSocialLoginService;
     private final LogoutService logoutService;
     private final JwtProps jwtProps;
@@ -46,8 +44,12 @@ public class NonSocialController {
      * @Description: 로그아웃 API
      */
     @GetMapping("/login/oauth2/logout")
-    public ResponseEntity<String> logout(HttpServletRequest httpServletRequest){
-        if(logoutService.logout(httpServletRequest.getHeader(jwtProps.jwtHeaderName)))
+    public ResponseEntity<String> logout(
+            @RequestHeader(value = JwtProps.AUTHORIZATION_HEADER)
+            @NotBlank(message = "Authorization can not be empty")
+            String token)
+    {
+        if (logoutService.logout(token))
             return new ResponseEntity<>("logout Complete", HttpStatus.OK);
         else
             return new ResponseEntity<>("logout Failed", HttpStatus.FORBIDDEN);
