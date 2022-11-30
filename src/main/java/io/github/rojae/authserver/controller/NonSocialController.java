@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-public class OAuth2Controller {
+public class NonSocialController {
 
     private final NonSocialLoginService nonSocialLoginService;
     private final LogoutService logoutService;
     private final JwtProps jwtProps;
 
-    public OAuth2Controller(NonSocialLoginService nonSocialLoginService, LogoutService logoutService, JwtProps jwtProps) {
+    public NonSocialController(NonSocialLoginService nonSocialLoginService, LogoutService logoutService, JwtProps jwtProps) {
         this.nonSocialLoginService = nonSocialLoginService;
         this.logoutService = logoutService;
         this.jwtProps = jwtProps;
@@ -33,7 +33,7 @@ public class OAuth2Controller {
      * @author: rojae
      * @date : 2022/08/13
      **/
-    @PostMapping("/login/oauth2/nonsocial")
+    @PostMapping("/login/oauth2/nonsocial/login")
     public ResponseEntity<OAuth2LoginResponse> nonSocialLogin(@RequestBody ServiceLoginRequest request) {
         OAuth2LoginResponse response = nonSocialLoginService.login(request.getEmail(), request.getPassword());
         return new ResponseEntity<>(response, HttpStatus.OK);
