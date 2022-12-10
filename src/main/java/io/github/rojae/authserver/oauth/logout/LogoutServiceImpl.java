@@ -3,7 +3,7 @@ package io.github.rojae.authserver.oauth.logout;
 import io.github.rojae.authserver.common.jwt.JwtProvider;
 import io.github.rojae.authserver.domain.redis.RAccount;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
-import io.github.rojae.authserver.persistence.AccountRedisRepository;
+import io.github.rojae.authserver.persistence.RAccountRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,10 +13,10 @@ import java.util.logging.Logger;
 public class LogoutServiceImpl implements LogoutService {
     Logger logger = Logger.getLogger(LogoutServiceImpl.class.getName());
 
-    private final AccountRedisRepository accountRedisRepository;
+    private final RAccountRepository accountRedisRepository;
     private final JwtProvider jwtProvider;
 
-    public LogoutServiceImpl(AccountRedisRepository accountRedisRepository, JwtProvider jwtProvider) {
+    public LogoutServiceImpl(RAccountRepository accountRedisRepository, JwtProvider jwtProvider) {
         this.accountRedisRepository = accountRedisRepository;
         this.jwtProvider = jwtProvider;
     }

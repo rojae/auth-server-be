@@ -11,7 +11,7 @@ public interface SocialLoginService extends LoginService {
      * @author: rojae
      * @date : 2022/07/31
      **/
-    OAuth2LoginResponse login(String code);
+    OAuth2LoginResponse login(String code, String reqUuid);
 
 
 }

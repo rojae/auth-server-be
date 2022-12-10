@@ -5,6 +5,7 @@ public class RAccountBuilder {
     private String name;
     private String profileImage;
     private String accessToken;
+    private String reqUuid;
 
     public RAccountBuilder setId(String id) {
         this.id = id;
@@ -26,7 +27,12 @@ public class RAccountBuilder {
         return this;
     }
 
+    public RAccountBuilder setReqUuid(String reqUuid) {
+        this.reqUuid = reqUuid;
+        return this;
+    }
+
     public RAccount createRAccount() {
-        return new RAccount(id, name, profileImage, accessToken);
+        return new RAccount(id, name, profileImage, accessToken, reqUuid);
     }
 }

@@ -5,17 +5,18 @@ import io.github.rojae.authserver.common.props.JwtProps;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
 import java.io.Serializable;
 
 @RedisHash(value = "RAccount")
 public class RAccount implements Serializable {
 
-    public RAccount(String id, String name, String profileImage, String accessToken) {
+    public RAccount(String id, String name, String profileImage, String accessToken, String reqUuid) {
         this.id = id;
         this.name = name;
         this.profileImage = profileImage;
         this.accessToken = accessToken;
+        this.reqUuid = reqUuid;
     }
 
     @Id
@@ -26,6 +27,7 @@ public class RAccount implements Serializable {
     private String profileImage;
 
     private String accessToken;
+    private String reqUuid;
 
     public static String idFormat(PlatformType platformType, String email) {
         return String.format("%s:%s",platformType.name(),email);
@@ -50,5 +52,9 @@ public class RAccount implements Serializable {
 
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public String getReqUuid() {
+        return reqUuid;
     }
 }

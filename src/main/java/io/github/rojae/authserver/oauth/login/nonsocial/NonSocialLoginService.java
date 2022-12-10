@@ -6,7 +6,7 @@ import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 
 public interface NonSocialLoginService extends LoginService {
 
-    OAuth2LoginResponse login(String email, String password);
+    OAuth2LoginResponse login(String email, String password, String reqUuid);
 
 
 }
