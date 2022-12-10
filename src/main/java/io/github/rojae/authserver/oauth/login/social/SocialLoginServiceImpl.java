@@ -7,7 +7,7 @@ import io.github.rojae.authserver.domain.redis.RAccount;
 import io.github.rojae.authserver.domain.redis.RAccountBuilder;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
-import io.github.rojae.authserver.persistence.AccountRedisRepository;
+import io.github.rojae.authserver.persistence.RAccountRepository;
 import io.github.rojae.authserver.persistence.AccountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +25,9 @@ public class SocialLoginServiceImpl implements SocialLoginService {
     private final JwtProvider jwtProvider;
     private final OAuth2Props oAuth2Props;
     private final AccountRepository accountRepository;
-    private final AccountRedisRepository accountRedisRepository;
+    private final RAccountRepository accountRedisRepository;
 
-    public SocialLoginServiceImpl(JwtProvider jwtProvider, OAuth2Props oAuth2Props, AccountRepository accountRepository, AccountRedisRepository accountRedisRepository) {
+    public SocialLoginServiceImpl(JwtProvider jwtProvider, OAuth2Props oAuth2Props, AccountRepository accountRepository, RAccountRepository accountRedisRepository) {
         this.jwtProvider = jwtProvider;
         this.oAuth2Props = oAuth2Props;
         this.accountRepository = accountRepository;
@@ -35,20 +35,20 @@ public class SocialLoginServiceImpl implements SocialLoginService {
     }
 
     @Override
-    public OAuth2LoginResponse login(String code) {
+    public OAuth2LoginResponse login(String code, String reqUuid) {
         return null;
     }
 
     @Override
-    public String publishToken(OAuth2Principal oAuth2Principal) {
+    public String publishToken(OAuth2Principal oAuth2Principal, String reqUuid) {
         logger.info("STEP 1 :: TOKEN CREATE");
         String token = this.generateToken(oAuth2Principal);
 
         logger.info("STEP 2 :: USER INFO SAVE DATABASE");
-        this.saveDB(oAuth2Principal, token);
+        this.saveDB(oAuth2Principal, token, reqUuid);
 
         logger.info("STEP 3 :: TOKEN INFO SAVE REDIS");
-        this.saveRedis(oAuth2Principal, token);
+        this.saveRedis(oAuth2Principal, token, reqUuid);
 
         return token;
     }
@@ -67,7 +67,7 @@ public class SocialLoginServiceImpl implements SocialLoginService {
 
     @Override
     @Transactional(readOnly = false)
-    public boolean saveDB(OAuth2Principal oAuth2Principal, String token) {
+    public boolean saveDB(OAuth2Principal oAuth2Principal, String token, String reqUuid) {
         Account selectedAccount = accountRepository.findByEmail(oAuth2Principal.getEmail());
 
         // 새로운 계정인 경우, 회원가입 처
@@ -82,6 +82,7 @@ public class SocialLoginServiceImpl implements SocialLoginService {
             newAccount.setAccessToken(token);
             newAccount.setPassword(UUID.randomUUID().toString());
             newAccount.setIsAuth('Y');
+            newAccount.setReqUuid(reqUuid);
 
             accountRepository.save(newAccount);
         }
@@ -92,6 +93,8 @@ public class SocialLoginServiceImpl implements SocialLoginService {
             selectedAccount.setName(oAuth2Principal.getName());
             selectedAccount.setProfileImage(oAuth2Principal.getProfileImage());
             selectedAccount.setAccessToken(token);
+            selectedAccount.setReqUuid(reqUuid);
+
         }
 
         return true;
@@ -99,7 +102,7 @@ public class SocialLoginServiceImpl implements SocialLoginService {
 
     @Override
     @Transactional(readOnly = false)
-    public boolean saveRedis(OAuth2Principal oAuth2Principal, String token) {
+    public boolean saveRedis(OAuth2Principal oAuth2Principal, String token, String reqUuid) {
         // 기저장된 Redis 정보는 만료처리
         Optional<RAccount> beforeTokenInfo = accountRedisRepository.findById(RAccount.idFormat(oAuth2Principal.getPlatformType(), oAuth2Principal.getEmail()));
 
@@ -119,6 +122,7 @@ public class SocialLoginServiceImpl implements SocialLoginService {
                 .setName(oAuth2Principal.getName())
                 .setProfileImage(oAuth2Principal.getProfileImage())
                 .setAccessToken(token)
+                .setReqUuid(reqUuid)
                 .createRAccount();
 
         accountRedisRepository.save(newTokenInfo);

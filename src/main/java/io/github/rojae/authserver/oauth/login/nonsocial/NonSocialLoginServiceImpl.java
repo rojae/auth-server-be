@@ -9,7 +9,7 @@ import io.github.rojae.authserver.domain.redis.RAccountBuilder;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponseBuilder;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
-import io.github.rojae.authserver.persistence.AccountRedisRepository;
+import io.github.rojae.authserver.persistence.RAccountRepository;
 import io.github.rojae.authserver.persistence.AccountRepository;
 import io.github.rojae.authserver.util.TimeUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,10 +29,10 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
     private final JwtProvider jwtProvider;
     private final OAuth2Props oAuth2Props;
     private final AccountRepository accountRepository;
-    private final AccountRedisRepository accountRedisRepository;
+    private final RAccountRepository accountRedisRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public NonSocialLoginServiceImpl(JwtProvider jwtProvider, OAuth2Props oAuth2Props, AccountRepository accountRepository, AccountRedisRepository accountRedisRepository, PasswordEncoder passwordEncoder) {
+    public NonSocialLoginServiceImpl(JwtProvider jwtProvider, OAuth2Props oAuth2Props, AccountRepository accountRepository, RAccountRepository accountRedisRepository, PasswordEncoder passwordEncoder) {
         this.jwtProvider = jwtProvider;
         this.oAuth2Props = oAuth2Props;
         this.accountRepository = accountRepository;
@@ -41,7 +41,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
     }
 
     @Override
-    public OAuth2LoginResponse login(String email, String password) {
+    public OAuth2LoginResponse login(String email, String password, String reqUuid) {
         Account selectedAccount = accountRepository.findByEmail(email);
 
         if (passwordEncoder.matches(password, selectedAccount.getPassword())) {
@@ -53,7 +53,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
             oAuth2Principal.setProfileImage(selectedAccount.getProfileImage());
             oAuth2Principal.setPlatformType(selectedAccount.getPlatformType());
 
-            String token = this.publishToken(oAuth2Principal);
+            String token = this.publishToken(oAuth2Principal, reqUuid);
 
             return new OAuth2LoginResponseBuilder()
                     .setName(selectedAccount.getName())
@@ -68,15 +68,15 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
     }
 
     @Override
-    public String publishToken(OAuth2Principal oAuth2Principal) {
+    public String publishToken(OAuth2Principal oAuth2Principal, String reqUuid) {
         logger.info("STEP 1 :: TOKEN CREATE");
         String token = this.generateToken(oAuth2Principal);
 
         logger.info("STEP 2 :: USER INFO SAVE DATABASE");
-        this.saveDB(oAuth2Principal, token);
+        this.saveDB(oAuth2Principal, token, reqUuid);
 
         logger.info("STEP 3 :: TOKEN INFO SAVE REDIS");
-        this.saveRedis(oAuth2Principal, token);
+        this.saveRedis(oAuth2Principal, token, reqUuid);
 
         return token;
     }
@@ -95,19 +95,20 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
 
     @Override
     @Transactional(readOnly = false)
-    public boolean saveDB(OAuth2Principal oAuth2Principal, String token) {
+    public boolean saveDB(OAuth2Principal oAuth2Principal, String token, String reqUuid) {
         Account selectedAccount = accountRepository.findByEmail(oAuth2Principal.getEmail());
 
         // 이미 저장된 계정 정보는 업데이트 처리
         logger.info("기가입된 회원으로 정보를 최신화합니다.");
         selectedAccount.setAccessToken(token);
+        selectedAccount.setReqUuid(reqUuid);
 
         return true;
     }
 
     @Override
     @Transactional(readOnly = false)
-    public boolean saveRedis(OAuth2Principal oAuth2Principal, String token) {
+    public boolean saveRedis(OAuth2Principal oAuth2Principal, String token, String reqUuid) {
         // 기저장된 Redis 정보는 만료처리
         Optional<RAccount> beforeTokenInfo = accountRedisRepository.findById(RAccount.idFormat(oAuth2Principal.getPlatformType(), oAuth2Principal.getEmail()));
 
@@ -127,6 +128,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
                 .setName(oAuth2Principal.getName())
                 .setProfileImage(oAuth2Principal.getProfileImage())
                 .setAccessToken(token)
+                .setReqUuid(reqUuid)
                 .createRAccount();
 
         accountRedisRepository.save(newTokenInfo);

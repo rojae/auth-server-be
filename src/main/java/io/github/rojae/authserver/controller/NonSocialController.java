@@ -5,6 +5,7 @@ import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.login.nonsocial.NonSocialLoginService;
 import io.github.rojae.authserver.dto.ServiceLoginRequest;
 import io.github.rojae.authserver.oauth.logout.LogoutService;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +34,8 @@ public class NonSocialController {
      **/
     @PostMapping("/login/oauth2/nonsocial/login")
     public ResponseEntity<OAuth2LoginResponse> nonSocialLogin(@RequestBody ServiceLoginRequest request) {
-        OAuth2LoginResponse response = nonSocialLoginService.login(request.getEmail(), request.getPassword());
+        OAuth2LoginResponse response = nonSocialLoginService.login(request.getEmail(), request.getPassword(),
+            UUID.randomUUID().toString());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

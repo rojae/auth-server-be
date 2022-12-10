@@ -52,5 +52,16 @@ public class GlobalErrorHandler {
                 .body(new ApiBase<>(ApiCode.INVALID_QUERYSTRING_HEADER, e.getMessage()));
     }
 
+    // Redis Token Server's Validation
+    @ExceptionHandler({InvalidTokenException.class, InvalidKakaoTokenException.class})
+    public ResponseEntity<ApiBase<Object>> handleInvalidTokenException(Throwable e){
+        if(e instanceof InvalidTokenException)
+            return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.INVALID_SERVICE_TOKEN, e.getMessage()));
+        else if(e instanceof InvalidKakaoTokenException)
+            return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.INVALID_KAKAO_TOKEN, e.getMessage()));
+
+        return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.INVALID_SERVICE_TOKEN, e.getMessage()));
+    }
+
 
 }

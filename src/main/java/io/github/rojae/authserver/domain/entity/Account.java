@@ -53,6 +53,9 @@ public class Account extends TimeEntity {
     @Column(name = "accessToken", nullable = true, length = 1024)
     private String accessToken;
 
+    @Column(name = "reqUuid", nullable = false)
+    private String reqUuid;
+
     // 패스워드 암호화 기법
     public void encodePassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
@@ -122,4 +125,11 @@ public class Account extends TimeEntity {
         this.accessToken = accessToken;
     }
 
+    public String getReqUuid() {
+        return reqUuid;
+    }
+
+    public void setReqUuid(String reqUuid) {
+        this.reqUuid = reqUuid;
+    }
 }
