@@ -1,5 +1,6 @@
 package io.github.rojae.authserver.common.jwt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.github.rojae.authserver.common.crypt.AESCrypt;
@@ -27,21 +28,41 @@ public class JwtProvider {
         return SignatureAlgorithm.HS256;
     }
 
-    public String dataClaims(OAuth2Principal principal) throws Exception {
+    public String dataClaims(OAuth2Principal principal){
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
         AESCrypt aesCrypt = new AESCrypt(jwtProps.jwtCryptSecretKey, jwtProps.jwtCryptIv);
-        String data = mapper.writeValueAsString(principal);
+        String data = null;
+        try {
+            data = mapper.writeValueAsString(principal);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
-        return aesCrypt.encrypt(data);
+        try {
+            return aesCrypt.encrypt(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public OAuth2Principal dataClaims(String dataClaims) throws Exception {
+    public OAuth2Principal dataClaims(String dataClaims) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
         AESCrypt aesCrypt = new AESCrypt(jwtProps.jwtCryptSecretKey, jwtProps.jwtCryptIv);
-        String data = aesCrypt.decrypt(dataClaims);
-        return mapper.readValue(data, OAuth2Principal.class);
+        String data = null;
+
+        try {
+            data = aesCrypt.decrypt(dataClaims);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            return mapper.readValue(data, OAuth2Principal.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String generateToken(OAuth2Principal principal) {
@@ -103,7 +124,7 @@ public class JwtProvider {
         return claimMap != null;
     }
 
-    public OAuth2Principal toPrincipal(String token) throws Exception {
+    public OAuth2Principal toPrincipal(String token){
         Map<String, Object> claimMap = null;
         try {
             claimMap = Jwts.parser()

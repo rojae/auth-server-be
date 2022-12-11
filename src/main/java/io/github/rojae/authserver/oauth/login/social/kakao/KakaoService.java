@@ -151,7 +151,7 @@ public class KakaoService extends SocialLoginServiceImpl {
         ResponseEntity<Map> response = restProvider.send(HttpMethod.POST, oAuth2Props.kakaoUnlinkUri, headers, Map.class);
         logger.info(String.format("KAKAO UNLINK :: RESPONSE => %s", response));
 
-        if(!this.unlinkDB(oAuth2Principal.getEmail(), oAuth2Principal.getPlatformType())){
+        if(!this.unlinkDB(token)){
             throw new DatabaseTransactionException();
         }
 

@@ -133,8 +133,9 @@ public class SocialLoginServiceImpl implements SocialLoginService {
 
     @Override
     @Transactional(readOnly = false)
-    public boolean unlinkDB(String email, PlatformType platformType) {
-        Account savedAccount = accountRepository.findByEmailAndPlatformType(email, platformType);
+    public boolean unlinkDB(String token) {
+        OAuth2Principal oAuth2Principal = jwtProvider.toPrincipal(token);
+        Account savedAccount = accountRepository.findByEmailAndPlatformType(oAuth2Principal.getEmail(), oAuth2Principal.getPlatformType());
         savedAccount.setEnable('N');
         return true;
     }

@@ -37,5 +37,5 @@ public interface LoginService {
      **/
     boolean saveRedis(OAuth2Principal oAuth2Principal, String token, String reqUuid);
 
-    boolean unlinkDB(String email, PlatformType platformType);
+    boolean unlinkDB(String token);
 }
