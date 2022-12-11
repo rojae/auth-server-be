@@ -1,6 +1,7 @@
 package io.github.rojae.authserver.oauth.login.social.kakao;
 
 import io.github.rojae.authserver.common.enums.PlatformType;
+import io.github.rojae.authserver.common.exception.DatabaseTransactionException;
 import io.github.rojae.authserver.common.exception.InvalidKakaoTokenException;
 import io.github.rojae.authserver.common.exception.InvalidTokenException;
 import io.github.rojae.authserver.common.http.HttpHeader;
@@ -134,12 +135,14 @@ public class KakaoService extends SocialLoginServiceImpl {
         OAuth2Principal oAuth2Principal = jwtProvider.toPrincipal(token);
 
         Optional<RAccount> currentTokenInfo = rAccountRepository.findById(RAccount.idFormat(oAuth2Principal.getPlatformType(), oAuth2Principal.getEmail()));
-        if(currentTokenInfo.isEmpty())
+        if(currentTokenInfo.isEmpty()){
             throw new InvalidTokenException();
+        }
 
         Optional<RKakaoTokenInfo> kakaoTokenInfo = rKakaoTokenInfoRepository.findById(currentTokenInfo.get().getReqUuid());
-        if(kakaoTokenInfo.isEmpty())
+        if(kakaoTokenInfo.isEmpty()){
             throw new InvalidKakaoTokenException();
+        }
 
         HttpHeader headers = new HttpHeader(MediaType.APPLICATION_FORM_URLENCODED);
         headers.addHeader("Authorization", String.format("Bearer %s", kakaoTokenInfo.get().getAccess_token()));
@@ -147,6 +150,10 @@ public class KakaoService extends SocialLoginServiceImpl {
 
         ResponseEntity<Map> response = restProvider.send(HttpMethod.POST, oAuth2Props.kakaoUnlinkUri, headers, Map.class);
         logger.info(String.format("KAKAO UNLINK :: RESPONSE => %s", response));
+
+        if(!this.unlinkDB(token)){
+            throw new DatabaseTransactionException();
+        }
 
         return response;
     }

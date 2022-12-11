@@ -1,5 +1,6 @@
 package io.github.rojae.authserver.oauth.login.social;
 
+import io.github.rojae.authserver.common.enums.PlatformType;
 import io.github.rojae.authserver.common.jwt.JwtProvider;
 import io.github.rojae.authserver.common.props.OAuth2Props;
 import io.github.rojae.authserver.domain.entity.Account;
@@ -68,7 +69,7 @@ public class SocialLoginServiceImpl implements SocialLoginService {
     @Override
     @Transactional(readOnly = false)
     public boolean saveDB(OAuth2Principal oAuth2Principal, String token, String reqUuid) {
-        Account selectedAccount = accountRepository.findByEmail(oAuth2Principal.getEmail());
+        Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuth(oAuth2Principal.getEmail(), 'Y', 'Y');
 
         // 새로운 계정인 경우, 회원가입 처
         if (selectedAccount == null) {
@@ -82,6 +83,7 @@ public class SocialLoginServiceImpl implements SocialLoginService {
             newAccount.setAccessToken(token);
             newAccount.setPassword(UUID.randomUUID().toString());
             newAccount.setIsAuth('Y');
+            newAccount.setEnable('Y');
             newAccount.setReqUuid(reqUuid);
 
             accountRepository.save(newAccount);
@@ -126,6 +128,15 @@ public class SocialLoginServiceImpl implements SocialLoginService {
                 .createRAccount();
 
         accountRedisRepository.save(newTokenInfo);
+        return true;
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public boolean unlinkDB(String token) {
+        OAuth2Principal oAuth2Principal = jwtProvider.toPrincipal(token);
+        Account savedAccount = accountRepository.findByEmailAndPlatformType(oAuth2Principal.getEmail(), oAuth2Principal.getPlatformType());
+        savedAccount.setEnable('N');
         return true;
     }
 }

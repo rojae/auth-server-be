@@ -1,11 +1,16 @@
 package io.github.rojae.authserver.oauth.login.nonsocial;
 
 import io.github.rojae.authserver.common.enums.PlatformType;
+import io.github.rojae.authserver.common.exception.AuthAccountInvalidException;
+import io.github.rojae.authserver.common.exception.LoginAccountInvalidException;
+import io.github.rojae.authserver.common.exception.SignupDuplicateException;
 import io.github.rojae.authserver.common.jwt.JwtProvider;
 import io.github.rojae.authserver.common.props.OAuth2Props;
 import io.github.rojae.authserver.domain.entity.Account;
 import io.github.rojae.authserver.domain.redis.RAccount;
 import io.github.rojae.authserver.domain.redis.RAccountBuilder;
+import io.github.rojae.authserver.dto.ServiceAuthRequest;
+import io.github.rojae.authserver.dto.ServiceSignupRequest;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponseBuilder;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
@@ -41,10 +46,34 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
     }
 
     @Override
-    public OAuth2LoginResponse login(String email, String password, String reqUuid) {
-        Account selectedAccount = accountRepository.findByEmail(email);
+    @Transactional(readOnly = false)
+    public Account signup(ServiceSignupRequest request) {
+        if(accountRepository.existsByEmailAndIsEnable(request.getEmail(), 'Y')){
+            throw new SignupDuplicateException();
+        }
 
-        if (passwordEncoder.matches(password, selectedAccount.getPassword())) {
+        Account newAccount = new Account(
+            request.getName(),
+            passwordEncoder.encode(request.getPassword()),
+            request.getEmail(), request.getPlatformType(),
+            request.getProfileImage(),
+            "EMPTY",
+            'Y'
+        );
+
+        accountRepository.save(newAccount);
+
+        return newAccount;
+    }
+
+    @Override
+    public OAuth2LoginResponse login(String email, String password, String reqUuid) {
+        Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuth(email, 'Y', 'Y');
+
+        if(selectedAccount == null){
+            throw new LoginAccountInvalidException();
+        }
+        else if (passwordEncoder.matches(password, selectedAccount.getPassword())) {
             logger.info(String.format("SUCCESS LOGIN :: %s", email));
 
             OAuth2Principal oAuth2Principal = new OAuth2Principal();
@@ -63,8 +92,22 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
                     .setToken(token)
                     .setExpireTime(TimeUtils.dateFomat(jwtProvider.getExpiration(token), "yyyy.MM.dd HH:mm:ss"))
                     .createOAuth2LoginResponse();
-        } else
+        } else{
             throw new UsernameNotFoundException(email);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void auth(ServiceAuthRequest request) {
+        Account selectedAccount = accountRepository.findByEmailAndPlatformType(request.getEmail(), request.getPlatformType());
+
+        if(selectedAccount == null){
+            throw new AuthAccountInvalidException();
+        }
+        else {
+            selectedAccount.setIsAuth('Y');
+        }
     }
 
     @Override
@@ -96,7 +139,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
     @Override
     @Transactional(readOnly = false)
     public boolean saveDB(OAuth2Principal oAuth2Principal, String token, String reqUuid) {
-        Account selectedAccount = accountRepository.findByEmail(oAuth2Principal.getEmail());
+        Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuth(oAuth2Principal.getEmail(), 'Y', 'Y');
 
         // 이미 저장된 계정 정보는 업데이트 처리
         logger.info("기가입된 회원으로 정보를 최신화합니다.");
@@ -132,6 +175,15 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
                 .createRAccount();
 
         accountRedisRepository.save(newTokenInfo);
+        return true;
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public boolean unlinkDB(String token) {
+        OAuth2Principal oAuth2Principal = jwtProvider.toPrincipal(token);
+        Account savedAccount = accountRepository.findByEmailAndPlatformType(oAuth2Principal.getEmail(), oAuth2Principal.getPlatformType());
+        savedAccount.setEnable('N');
         return true;
     }
 }
