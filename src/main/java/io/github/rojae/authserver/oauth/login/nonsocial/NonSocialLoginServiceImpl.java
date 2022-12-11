@@ -42,7 +42,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
 
     @Override
     public OAuth2LoginResponse login(String email, String password, String reqUuid) {
-        Account selectedAccount = accountRepository.findByEmail(email);
+        Account selectedAccount = accountRepository.findByEmailAndIsEnable(email, 'Y');
 
         if (passwordEncoder.matches(password, selectedAccount.getPassword())) {
             logger.info(String.format("SUCCESS LOGIN :: %s", email));
@@ -96,7 +96,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
     @Override
     @Transactional(readOnly = false)
     public boolean saveDB(OAuth2Principal oAuth2Principal, String token, String reqUuid) {
-        Account selectedAccount = accountRepository.findByEmail(oAuth2Principal.getEmail());
+        Account selectedAccount = accountRepository.findByEmailAndIsEnable(oAuth2Principal.getEmail(), 'Y');
 
         // 이미 저장된 계정 정보는 업데이트 처리
         logger.info("기가입된 회원으로 정보를 최신화합니다.");
@@ -132,6 +132,14 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
                 .createRAccount();
 
         accountRedisRepository.save(newTokenInfo);
+        return true;
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public boolean unlinkDB(String email, PlatformType platformType) {
+        Account savedAccount = accountRepository.findByEmailAndPlatformType(email, platformType);
+        savedAccount.setEnable('N');
         return true;
     }
 }

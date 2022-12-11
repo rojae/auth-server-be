@@ -53,6 +53,9 @@ public class Account extends TimeEntity {
     @Column(name = "accessToken", nullable = true, length = 1024)
     private String accessToken;
 
+    @Column(name = "isEnable", nullable = false)
+    private char isEnable;
+
     @Column(name = "reqUuid", nullable = false)
     private String reqUuid;
 
@@ -131,5 +134,13 @@ public class Account extends TimeEntity {
 
     public void setReqUuid(String reqUuid) {
         this.reqUuid = reqUuid;
+    }
+
+    public char getEnable() {
+        return isEnable;
+    }
+
+    public void setEnable(char enable) {
+        isEnable = enable;
     }
 }

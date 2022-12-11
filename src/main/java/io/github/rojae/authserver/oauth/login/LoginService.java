@@ -1,5 +1,6 @@
 package io.github.rojae.authserver.oauth.login;
 
+import io.github.rojae.authserver.common.enums.PlatformType;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
 
 public interface LoginService {
@@ -35,4 +36,6 @@ public interface LoginService {
      * @date : 2022/07/31
      **/
     boolean saveRedis(OAuth2Principal oAuth2Principal, String token, String reqUuid);
+
+    boolean unlinkDB(String email, PlatformType platformType);
 }
