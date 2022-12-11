@@ -8,4 +8,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Account findByEmailAndIsEnable(String email, char isEnable);
     Account findByEmailAndPlatformType(String email, PlatformType platformType);
     boolean existsByEmail(String email);
+    boolean existsByEmailAndIsEnable(String email, char isEnable);
+
 }

@@ -1,11 +1,14 @@
 package io.github.rojae.authserver.oauth.login.nonsocial;
 
 import io.github.rojae.authserver.common.enums.PlatformType;
+import io.github.rojae.authserver.common.exception.LoginAccountInvalidException;
+import io.github.rojae.authserver.common.exception.SignupDuplicateException;
 import io.github.rojae.authserver.common.jwt.JwtProvider;
 import io.github.rojae.authserver.common.props.OAuth2Props;
 import io.github.rojae.authserver.domain.entity.Account;
 import io.github.rojae.authserver.domain.redis.RAccount;
 import io.github.rojae.authserver.domain.redis.RAccountBuilder;
+import io.github.rojae.authserver.dto.ServiceSignupRequest;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponseBuilder;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
@@ -41,10 +44,26 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
     }
 
     @Override
+    @Transactional(readOnly = false)
+    public Account signup(ServiceSignupRequest request) {
+        if(accountRepository.existsByEmailAndIsEnable(request.getEmail(), 'Y')){
+            throw new SignupDuplicateException();
+        }
+
+        Account newAccount = new Account(request.getName(), passwordEncoder.encode(request.getPassword()), request.getEmail(), request.getPlatformType(), request.getProfileImage(), "EMPTY");
+        accountRepository.save(newAccount);
+
+        return newAccount;
+    }
+
+    @Override
     public OAuth2LoginResponse login(String email, String password, String reqUuid) {
         Account selectedAccount = accountRepository.findByEmailAndIsEnable(email, 'Y');
 
-        if (passwordEncoder.matches(password, selectedAccount.getPassword())) {
+        if(selectedAccount == null){
+            throw new LoginAccountInvalidException();
+        }
+        else if (passwordEncoder.matches(password, selectedAccount.getPassword())) {
             logger.info(String.format("SUCCESS LOGIN :: %s", email));
 
             OAuth2Principal oAuth2Principal = new OAuth2Principal();
@@ -63,8 +82,9 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
                     .setToken(token)
                     .setExpireTime(TimeUtils.dateFomat(jwtProvider.getExpiration(token), "yyyy.MM.dd HH:mm:ss"))
                     .createOAuth2LoginResponse();
-        } else
+        } else{
             throw new UsernameNotFoundException(email);
+        }
     }
 
     @Override

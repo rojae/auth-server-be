@@ -53,7 +53,7 @@ public class GlobalErrorHandler {
     }
 
     // Redis Token Server's Validation
-    @ExceptionHandler({InvalidTokenException.class, InvalidKakaoTokenException.class, DatabaseTransactionException.class})
+    @ExceptionHandler({InvalidTokenException.class, InvalidKakaoTokenException.class, DatabaseTransactionException.class, SignupDuplicateException.class, LoginAccountInvalidException.class})
     public ResponseEntity<ApiBase<Object>> handleInvalidTokenException(Throwable e){
         if(e instanceof InvalidTokenException)
             return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.INVALID_SERVICE_TOKEN, e.getMessage()));
@@ -61,6 +61,11 @@ public class GlobalErrorHandler {
             return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.INVALID_KAKAO_TOKEN, e.getMessage()));
         else if(e instanceof DatabaseTransactionException)
             return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.DATABASE_TRANSACTION_FAIL, e.getMessage()));
+        else if(e instanceof SignupDuplicateException)
+            return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.SIGNUP_DUPLICATE, e.getMessage()));
+        else if(e instanceof LoginAccountInvalidException)
+            return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.LOGIN_ACCOUNT_INVALID, e.getMessage()));
+
 
         return ResponseEntity.badRequest().body(new ApiBase<>(ApiCode.INVALID_SERVICE_TOKEN, e.getMessage()));
     }
