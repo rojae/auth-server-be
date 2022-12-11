@@ -17,7 +17,8 @@ public enum ApiCode {
 
     // Service Level //
     LOGIN_ACCOUNT_INVALID("A3000", "요청 데이터로 로그인에 실패했습니다."),
-    SIGNUP_DUPLICATE("A3001", "이미 가입된 회원정보가 있습니다"),;
+    SIGNUP_DUPLICATE("A3001", "이미 가입된 회원정보가 있습니다"),
+    AUTH_ACCOUNT_INVALID("A3002", "인증 가능한 회원정보가 없습니다");
 
     private final String code;
     private final String reason;

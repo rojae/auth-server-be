@@ -100,7 +100,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
     @Override
     @Transactional(readOnly = false)
     public void auth(ServiceAuthRequest request) {
-        Account selectedAccount = accountRepository.findByEmailAndPlatformType(request.getEmail(), request.getPlatformType());
+        Account selectedAccount = accountRepository.findByEmailAndPlatformTypeAndIsEnableAndIsAuth(request.getEmail(), request.getPlatformType(), 'Y', 'N');
 
         if(selectedAccount == null){
             throw new AuthAccountInvalidException();
