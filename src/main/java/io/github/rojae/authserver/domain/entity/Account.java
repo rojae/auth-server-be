@@ -15,13 +15,14 @@ public class Account extends TimeEntity {
     public Account() {
     }
 
-    public Account(String name, String password, String email, PlatformType platformType, String profileImage, String reqUuid) {
+    public Account(String name, String password, String email, PlatformType platformType, String profileImage, String reqUuid, char isEnable) {
         this.name = name;
         this.password = password;
         this.email = email;
         this.platformType = platformType;
         this.profileImage = profileImage;
         this.reqUuid = reqUuid;
+        this.isEnable = isEnable;
     }
 
     @Id

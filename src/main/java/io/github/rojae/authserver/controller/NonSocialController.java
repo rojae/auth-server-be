@@ -5,6 +5,7 @@ import io.github.rojae.authserver.common.exception.DatabaseTransactionException;
 import io.github.rojae.authserver.common.props.JwtProps;
 import io.github.rojae.authserver.domain.entity.Account;
 import io.github.rojae.authserver.dto.ApiBase;
+import io.github.rojae.authserver.dto.ServiceAuthRequest;
 import io.github.rojae.authserver.dto.ServiceSignupRequest;
 import io.github.rojae.authserver.dto.ServiceSignupResponse;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
@@ -45,6 +46,11 @@ public class NonSocialController {
         return ResponseEntity.ok(new ApiBase<>(ApiCode.OK, new ServiceSignupResponse(savedAccount.getEmail(), savedAccount.getName(), savedAccount.getPlatformType())));
     }
 
+    @PostMapping("/login/oauth2/nonsocial/auth")
+    public ResponseEntity<ApiBase> auth(@RequestBody ServiceAuthRequest request){
+        nonSocialLoginService.auth(request);
+        return ResponseEntity.ok(new ApiBase<>(ApiCode.OK, ""));
+    }
 
     /**
      * @method : nonSocialLogin

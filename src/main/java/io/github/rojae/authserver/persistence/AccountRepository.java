@@ -5,7 +5,7 @@ import io.github.rojae.authserver.domain.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    Account findByEmailAndIsEnable(String email, char isEnable);
+    Account findByEmailAndIsEnableAndIsAuth(String email, char isEnable, char isAuth);
     Account findByEmailAndPlatformType(String email, PlatformType platformType);
     boolean existsByEmail(String email);
     boolean existsByEmailAndIsEnable(String email, char isEnable);

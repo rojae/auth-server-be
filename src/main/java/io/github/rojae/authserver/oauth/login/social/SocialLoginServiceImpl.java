@@ -69,7 +69,7 @@ public class SocialLoginServiceImpl implements SocialLoginService {
     @Override
     @Transactional(readOnly = false)
     public boolean saveDB(OAuth2Principal oAuth2Principal, String token, String reqUuid) {
-        Account selectedAccount = accountRepository.findByEmailAndIsEnable(oAuth2Principal.getEmail(), 'Y');
+        Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuth(oAuth2Principal.getEmail(), 'Y', 'Y');
 
         // 새로운 계정인 경우, 회원가입 처
         if (selectedAccount == null) {
