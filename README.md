@@ -20,3 +20,10 @@
     "password": "password"
 }
 ```
+
+### H2 Setting
+- Install H2
+  - http://www.h2database.com/html/installation.html
+- Enter H2 Console 
+- Create Database in console
+  - jdbcUrl : jdbc:h2:tcp://localhost/~/auth
