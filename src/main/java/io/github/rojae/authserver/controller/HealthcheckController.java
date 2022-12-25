@@ -1,5 +1,7 @@
 package io.github.rojae.authserver.controller;
 
+import io.github.rojae.authserver.common.enums.ApiCode;
+import io.github.rojae.authserver.dto.ApiBase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +17,9 @@ public class HealthcheckController {
      * @date : 2022/08/14
      **/
     @GetMapping("/")
-    public ResponseEntity<String> aliveCheck(){
-        return new ResponseEntity<>("Alive Check OK", HttpStatus.OK);
+    public ResponseEntity<ApiBase<Object>> aliveCheck(){
+        ApiBase<Object> response = new ApiBase<>(ApiCode.OK, "Alive Check Ok");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
