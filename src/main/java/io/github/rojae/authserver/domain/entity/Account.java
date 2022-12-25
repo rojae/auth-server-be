@@ -15,15 +15,14 @@ public class Account extends TimeEntity {
     public Account() {
     }
 
-    public Account(Long id, String name, String password, String email, char isAuth, PlatformType platformType, String profileImage, String accessToken) {
-        this.id = id;
+    public Account(String name, String password, String email, PlatformType platformType, String profileImage, String reqUuid, char isEnable) {
         this.name = name;
         this.password = password;
         this.email = email;
-        this.isAuth = isAuth;
         this.platformType = platformType;
         this.profileImage = profileImage;
-        this.accessToken = accessToken;
+        this.reqUuid = reqUuid;
+        this.isEnable = isEnable;
     }
 
     @Id
@@ -52,6 +51,12 @@ public class Account extends TimeEntity {
 
     @Column(name = "accessToken", nullable = true, length = 1024)
     private String accessToken;
+
+    @Column(name = "isEnable", nullable = false)
+    private char isEnable;
+
+    @Column(name = "reqUuid", nullable = false)
+    private String reqUuid;
 
     // 패스워드 암호화 기법
     public void encodePassword(PasswordEncoder passwordEncoder) {
@@ -122,4 +127,19 @@ public class Account extends TimeEntity {
         this.accessToken = accessToken;
     }
 
+    public String getReqUuid() {
+        return reqUuid;
+    }
+
+    public void setReqUuid(String reqUuid) {
+        this.reqUuid = reqUuid;
+    }
+
+    public char getEnable() {
+        return isEnable;
+    }
+
+    public void setEnable(char enable) {
+        isEnable = enable;
+    }
 }

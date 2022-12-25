@@ -36,6 +36,9 @@ public class OAuth2Props {
     @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     public String kakaoUserInfoUri;
 
+    @Value("${spring.security.oauth2.client.provider.kakao.unlink}")
+    public String kakaoUnlinkUri;
+
     @Value("${spring.security.oauth2.client.registration.kakao.response-type}")
     public String responseType;
 

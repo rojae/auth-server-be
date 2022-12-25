@@ -9,10 +9,14 @@ import io.github.rojae.authserver.dto.KakaoLogoutInfoResponse;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.login.social.kakao.KakaoService;
 import io.github.rojae.authserver.oauth.logout.LogoutService;
+import java.util.Map;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,8 +40,8 @@ public class KakaoSocialController {
 
     // 카카오 브라우저 로그인을 위한, 카카오 인증서버 호출 정보
     @GetMapping("/login/oauth2/social/kakao-info")
-    public ResponseEntity<ApiBase<KakaoClientInfoResponse>> kakaoClientInfo() {
-        KakaoClientInfoResponse data = new KakaoClientInfoResponse(
+    public ResponseEntity<KakaoClientInfoResponse> kakaoClientInfo() {
+        KakaoClientInfoResponse response = new KakaoClientInfoResponse(
                 oAuth2Props.kakaoAuthUri,
                 oAuth2Props.kakaoClientId,
                 oAuth2Props.kakaoRedirectUri,
@@ -49,20 +53,20 @@ public class KakaoSocialController {
                         oAuth2Props.responseType
                 )
         );
-        return new ResponseEntity<>(new ApiBase<>(ApiCode.OK, data), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 카카오 브라우저 로그인 이후, 카카오 인증서버에서 전송되는 API
     @GetMapping("/login/oauth2/social/kakao-callback")
-    public ResponseEntity<ApiBase<OAuth2LoginResponse>> login(@RequestParam(value = "code") @NotBlank(message = "code cannot be empty value") String code ){
-        OAuth2LoginResponse data = kakaoService.login(code);
-        return new ResponseEntity<>(new ApiBase<>(ApiCode.OK, data), HttpStatus.OK);
+    public ResponseEntity<OAuth2LoginResponse> login(@RequestParam(value = "code") @NotBlank(message = "code cannot be empty value") String code ){
+        OAuth2LoginResponse response = kakaoService.login(code, UUID.randomUUID().toString());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 카카오 브라우저 로그아웃을 위해서는, 브라우저 이동이 필요. 호출 정보 API
     @GetMapping("/login/oauth2/social/kakao-logout")
-    public ResponseEntity<ApiBase<KakaoLogoutInfoResponse>> logout(){
-        KakaoLogoutInfoResponse data = new KakaoLogoutInfoResponse(oAuth2Props.logoutUri,
+    public ResponseEntity<KakaoLogoutInfoResponse> logout(){
+        KakaoLogoutInfoResponse response = new KakaoLogoutInfoResponse(oAuth2Props.logoutUri,
                 oAuth2Props.kakaoClientId,
                 jwtProps.logoutUri,
                 String.format("%s?client_id=%s&logout_redirect_uri=%s",
@@ -71,6 +75,14 @@ public class KakaoSocialController {
                         jwtProps.logoutUri
                 )
         );
-        return new ResponseEntity<>(new ApiBase<>(ApiCode.OK, data), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/login/oauth2/social/unlink")
+    public ResponseEntity<ApiBase<Map>> unlink(@RequestHeader(value = JwtProps.AUTHORIZATION_HEADER)
+                                            @NotBlank(message = "Authorization can not be empty")
+                                            String token) throws Exception {
+        ResponseEntity<Map> response = kakaoService.unLink(token);
+        return ResponseEntity.ok(new ApiBase<>(ApiCode.OK, "", response.getBody()));
     }
 }

@@ -1,17 +1,27 @@
 package io.github.rojae.authserver.oauth.login.social.kakao;
 
 import io.github.rojae.authserver.common.enums.PlatformType;
+import io.github.rojae.authserver.common.exception.DatabaseTransactionException;
+import io.github.rojae.authserver.common.exception.InvalidKakaoTokenException;
+import io.github.rojae.authserver.common.exception.InvalidTokenException;
 import io.github.rojae.authserver.common.http.HttpHeader;
 import io.github.rojae.authserver.common.http.RestProvider;
 import io.github.rojae.authserver.common.jwt.JwtProvider;
 import io.github.rojae.authserver.common.props.OAuth2Props;
+import io.github.rojae.authserver.domain.redis.RAccount;
+import io.github.rojae.authserver.domain.redis.RKakaoTokenInfo;
+import io.github.rojae.authserver.domain.redis.RKakaoUserInfo;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponse;
 import io.github.rojae.authserver.oauth.OAuth2LoginResponseBuilder;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
 import io.github.rojae.authserver.oauth.login.social.SocialLoginServiceImpl;
-import io.github.rojae.authserver.persistence.AccountRedisRepository;
+import io.github.rojae.authserver.persistence.RAccountRepository;
 import io.github.rojae.authserver.persistence.AccountRepository;
+import io.github.rojae.authserver.persistence.RKakaoTokenInfoRepository;
+import io.github.rojae.authserver.persistence.RKakaoUserInfoRepository;
 import io.github.rojae.authserver.util.TimeUtils;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +41,21 @@ public class KakaoService extends SocialLoginServiceImpl {
     private final RestProvider restProvider;
     private final JwtProvider jwtProvider;
     private final OAuth2Props oAuth2Props;
+    private final RAccountRepository rAccountRepository;
+    private final RKakaoTokenInfoRepository rKakaoTokenInfoRepository;
+    private final RKakaoUserInfoRepository rKakaoUserInfoRepository;
 
-    public KakaoService(JwtProvider jwtProvider, OAuth2Props oAuth2Props, AccountRepository accountRepository, AccountRedisRepository accountRedisRepository, RestProvider restProvider, JwtProvider jwtProvider1, OAuth2Props oAuth2Props1) {
-        super(jwtProvider, oAuth2Props, accountRepository, accountRedisRepository);
+    public KakaoService(JwtProvider jwtProvider, OAuth2Props oAuth2Props, AccountRepository accountRepository, RAccountRepository rAccountRepository, RestProvider restProvider, JwtProvider jwtProvider1, OAuth2Props oAuth2Props1,
+        RAccountRepository rAccountRepository1,
+        RKakaoTokenInfoRepository rKakaoTokenInfoRepository,
+        RKakaoUserInfoRepository rKakaoUserInfoRepository) {
+        super(jwtProvider, oAuth2Props, accountRepository, rAccountRepository);
         this.restProvider = restProvider;
         this.jwtProvider = jwtProvider1;
         this.oAuth2Props = oAuth2Props1;
+        this.rAccountRepository = rAccountRepository1;
+        this.rKakaoTokenInfoRepository = rKakaoTokenInfoRepository;
+        this.rKakaoUserInfoRepository = rKakaoUserInfoRepository;
     }
 
     public OAuth2Principal principal(KakaoUserInfoWrapper userInfoResponse) {
@@ -60,17 +79,21 @@ public class KakaoService extends SocialLoginServiceImpl {
     }
 
     @Override
-    public OAuth2LoginResponse login(String code) {
+    public OAuth2LoginResponse login(String code, String reqUuid) {
         logger.info(String.format("START KAKAO LOGIN :: CODE => %s", code));
 
         // STEP 1 : KAKAO TOKEN
         ResponseEntity<KakaoTokenWrapper> tokenResponse = this.getKakaoToken(code);
         logger.info(String.format("STEP 1 : KAKAO TOKEN => %s", tokenResponse.getBody()));
-
+        // REDIS SAVE :: KAKAO TOKEN INFO
+        rKakaoTokenInfoRepository.save(new RKakaoTokenInfo(reqUuid, tokenResponse.getBody().getToken_type(), tokenResponse.getBody().getAccess_token(), tokenResponse.getBody().getRefresh_token(), tokenResponse.getBody().getScope()));
+        
         // STEP 2 : KAKAO USER INFO
         ResponseEntity<KakaoUserInfoWrapper> userInfoResponse =
                 this.getKakaoUserInfo(Objects.requireNonNull(tokenResponse.getBody()).getAccess_token());
         logger.info(String.format("STEP 2 : KAKAO USER INFO => %s", userInfoResponse.getBody()));
+        // REDIS SAVE :: KAKAO USER INFO
+        rKakaoUserInfoRepository.save(new RKakaoUserInfo(reqUuid, userInfoResponse.getBody().getId(), userInfoResponse.getBody().connected_at, userInfoResponse.getBody().getProperties(), userInfoResponse.getBody().kakao_account ));
 
         // STEP 3 : Generate JWT Token including User's Info
         logger.info("STEP 3 : KAKAO JWT Login, Signup");
@@ -79,14 +102,13 @@ public class KakaoService extends SocialLoginServiceImpl {
         OAuth2Principal oAuth2Principal = this.principal(Objects.requireNonNull(userInfoResponse.getBody()));
 
         // Generate JWT Token, Save To DB, Save To Redis
-        String jwtToken = this.publishToken(oAuth2Principal);
+        String jwtToken = this.publishToken(oAuth2Principal,reqUuid);
 
         // Set Response Object
         OAuth2LoginResponse oAuth2LoginResponse = this.response(userInfoResponse.getBody(), jwtToken);
 
         logger.info(String.format("END KAKAO LOGIN :: CODE => %s", code));
         return oAuth2LoginResponse;
-
     }
 
     public ResponseEntity<KakaoTokenWrapper> getKakaoToken(String code) {
@@ -107,6 +129,33 @@ public class KakaoService extends SocialLoginServiceImpl {
         headers.addHeader("charset", "utf8");
 
         return restProvider.send(HttpMethod.POST, oAuth2Props.kakaoUserInfoUri, headers, KakaoUserInfoWrapper.class);
+    }
+
+    public ResponseEntity<Map> unLink(String token) throws Exception {
+        OAuth2Principal oAuth2Principal = jwtProvider.toPrincipal(token);
+
+        Optional<RAccount> currentTokenInfo = rAccountRepository.findById(RAccount.idFormat(oAuth2Principal.getPlatformType(), oAuth2Principal.getEmail()));
+        if(currentTokenInfo.isEmpty()){
+            throw new InvalidTokenException();
+        }
+
+        Optional<RKakaoTokenInfo> kakaoTokenInfo = rKakaoTokenInfoRepository.findById(currentTokenInfo.get().getReqUuid());
+        if(kakaoTokenInfo.isEmpty()){
+            throw new InvalidKakaoTokenException();
+        }
+
+        HttpHeader headers = new HttpHeader(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.addHeader("Authorization", String.format("Bearer %s", kakaoTokenInfo.get().getAccess_token()));
+        headers.addHeader("charset", "utf8");
+
+        ResponseEntity<Map> response = restProvider.send(HttpMethod.POST, oAuth2Props.kakaoUnlinkUri, headers, Map.class);
+        logger.info(String.format("KAKAO UNLINK :: RESPONSE => %s", response));
+
+        if(!this.unlinkDB(token)){
+            throw new DatabaseTransactionException();
+        }
+
+        return response;
     }
 
 }

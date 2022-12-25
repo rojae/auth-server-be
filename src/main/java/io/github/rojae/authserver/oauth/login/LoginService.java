@@ -10,7 +10,7 @@ public interface LoginService {
      * @author: rojae
      * @date : 2022/07/31
      **/
-    String publishToken(OAuth2Principal oAuth2Principal);
+    String publishToken(OAuth2Principal oAuth2Principal, String reqUuid);
 
     /**
      * @method : generateToken()
@@ -26,7 +26,7 @@ public interface LoginService {
      * @author: rojae
      * @date : 2022/07/31
      **/
-    boolean saveDB(OAuth2Principal oAuth2Principal, String token);
+    boolean saveDB(OAuth2Principal oAuth2Principal, String token, String reqUuid);
 
     /**
      * @method : saveRedis()
@@ -34,5 +34,13 @@ public interface LoginService {
      * @author: rojae
      * @date : 2022/07/31
      **/
-    boolean saveRedis(OAuth2Principal oAuth2Principal, String token);
+    boolean saveRedis(OAuth2Principal oAuth2Principal, String token, String reqUuid);
+
+    /**
+     * @method : unlinkDB()
+     * @description : Withdrawal Account to Database user table
+     * @author: rojae
+     * @date : 2022/07/31
+     **/
+    boolean unlinkDB(String token);
 }
