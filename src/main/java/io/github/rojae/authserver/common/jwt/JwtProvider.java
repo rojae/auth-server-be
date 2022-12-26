@@ -96,7 +96,7 @@ public class JwtProvider {
         Claims claims = Jwts.parser()
                 .setSigningKey(Base64.encodeBase64(jwtProps.jwtSecretKey.getBytes(StandardCharsets.UTF_8)))
                 .parseClaimsJws(token).getBody();
-        System.out.println(claims.toString());
+//        System.out.println(claims.toString());
 
         return claims.getExpiration();
     }

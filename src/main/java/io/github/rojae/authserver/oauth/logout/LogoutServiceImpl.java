@@ -4,14 +4,15 @@ import io.github.rojae.authserver.common.jwt.JwtProvider;
 import io.github.rojae.authserver.domain.redis.RAccount;
 import io.github.rojae.authserver.oauth.OAuth2Principal;
 import io.github.rojae.authserver.persistence.RAccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 public class LogoutServiceImpl implements LogoutService {
-    Logger logger = Logger.getLogger(LogoutServiceImpl.class.getName());
+    Logger logger = LoggerFactory.getLogger(LogoutServiceImpl.class.getName());
 
     private final RAccountRepository accountRedisRepository;
     private final JwtProvider jwtProvider;
@@ -32,15 +33,15 @@ public class LogoutServiceImpl implements LogoutService {
 
             if(currentTokenInfo.isPresent() && currentTokenInfo.get().getAccessToken().equals(token)){
                 accountRedisRepository.delete(currentTokenInfo.get());
-                logger.info(String.format("Logout Complete :: %s", token));
+                logger.debug(String.format("Logout Complete :: %s", token));
                 return true;
             }
             else{
-                logger.info(String.format("Token is not existed :: %s", token));
+                logger.debug(String.format("Token is not existed :: %s", token));
             }
 
         } catch (Exception e) {
-            logger.info(String.format("Parsing Failed :: %s", token));
+            logger.debug(String.format("Parsing Failed :: %s", token));
         }
 
         return false;

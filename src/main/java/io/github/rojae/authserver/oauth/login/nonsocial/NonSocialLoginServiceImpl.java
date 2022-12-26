@@ -17,19 +17,20 @@ import io.github.rojae.authserver.oauth.OAuth2Principal;
 import io.github.rojae.authserver.persistence.RAccountRepository;
 import io.github.rojae.authserver.persistence.AccountRepository;
 import io.github.rojae.authserver.util.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 @Transactional(readOnly = false)
 public class NonSocialLoginServiceImpl implements NonSocialLoginService {
 
-    Logger logger = Logger.getLogger(NonSocialLoginServiceImpl.class.getName());
+    Logger logger = LoggerFactory.getLogger(NonSocialLoginServiceImpl.class.getName());
 
     private final JwtProvider jwtProvider;
     private final OAuth2Props oAuth2Props;
@@ -74,7 +75,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
             throw new LoginAccountInvalidException();
         }
         else if (passwordEncoder.matches(password, selectedAccount.getPassword())) {
-            logger.info(String.format("SUCCESS LOGIN :: %s", email));
+            logger.debug(String.format("SUCCESS LOGIN :: %s", email));
 
             OAuth2Principal oAuth2Principal = new OAuth2Principal();
             oAuth2Principal.setName(selectedAccount.getName());
@@ -112,13 +113,13 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
 
     @Override
     public String publishToken(OAuth2Principal oAuth2Principal, String reqUuid) {
-        logger.info("STEP 1 :: TOKEN CREATE");
+        logger.debug("STEP 1 :: TOKEN CREATE");
         String token = this.generateToken(oAuth2Principal);
 
-        logger.info("STEP 2 :: USER INFO SAVE DATABASE");
+        logger.debug("STEP 2 :: USER INFO SAVE DATABASE");
         this.saveDB(oAuth2Principal, token, reqUuid);
 
-        logger.info("STEP 3 :: TOKEN INFO SAVE REDIS");
+        logger.debug("STEP 3 :: TOKEN INFO SAVE REDIS");
         this.saveRedis(oAuth2Principal, token, reqUuid);
 
         return token;
@@ -130,7 +131,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
         try {
             jwtProvider.verify(token);
         } catch (Exception e) {
-            logger.info("발급할 토큰에 검증에 실패했습니다.");
+            logger.debug("발급할 토큰에 검증에 실패했습니다.");
             e.printStackTrace();
         }
         return token;
@@ -142,7 +143,7 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
         Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuth(oAuth2Principal.getEmail(), 'Y', 'Y');
 
         // 이미 저장된 계정 정보는 업데이트 처리
-        logger.info("기가입된 회원으로 정보를 최신화합니다.");
+        logger.debug("기가입된 회원으로 정보를 최신화합니다.");
         selectedAccount.setAccessToken(token);
         selectedAccount.setReqUuid(reqUuid);
 
@@ -158,14 +159,14 @@ public class NonSocialLoginServiceImpl implements NonSocialLoginService {
         beforeTokenInfo.ifPresent(
                 rAccount -> {
                     // 기저장된 Redis 정보 삭제
-                    logger.info("사용 가능한 기발급 토큰정보를 삭제합니다.");
-                    logger.info(String.format("Id = %s | Name = %s | Token = %s", rAccount.getId(), rAccount.getName(), rAccount.getAccessToken()));
+                    logger.debug("사용 가능한 기발급 토큰정보를 삭제합니다.");
+                    logger.debug(String.format("Id = %s | Name = %s | Token = %s", rAccount.getId(), rAccount.getName(), rAccount.getAccessToken()));
                     accountRedisRepository.delete(rAccount);
                 }
         );
 
         // 새로운 토큰정보 Redis 저장
-        logger.info("새로운 토큰정보를 저장합니다.");
+        logger.debug("새로운 토큰정보를 저장합니다.");
         RAccount newTokenInfo = new RAccountBuilder()
                 .setId(RAccount.idFormat(oAuth2Principal.getPlatformType(), oAuth2Principal.getEmail()))
                 .setName(oAuth2Principal.getName())
