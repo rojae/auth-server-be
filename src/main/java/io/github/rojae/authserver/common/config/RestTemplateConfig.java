@@ -2,18 +2,19 @@ package io.github.rojae.authserver.common.config;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
 
 @Configuration
 public class RestTemplateConfig {
 
-    Logger logger = Logger.getLogger(RestTemplateConfig.class.getName());
+    Logger logger = LoggerFactory.getLogger(RestTemplateConfig.class.getName());
 
     @Bean
     HttpClient httpClient() {
@@ -38,7 +39,7 @@ public class RestTemplateConfig {
         RestTemplate restTemplate = new RestTemplate(factory);
 
         restTemplate.getInterceptors().add((request, body, execution) -> {
-            logger.info(String.format("HTTP : %s || Destination : %s || Header : %s || Body : %s ",
+            logger.debug(String.format("HTTP : %s || Destination : %s || Header : %s || Body : %s ",
                     request.getMethod(), request.getURI(), request.getHeaders(), new String(body, StandardCharsets.UTF_8)));
             return execution.execute(request, body);
         });

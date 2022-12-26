@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String token = httpServletRequest.getHeader(jwtProps.jwtHeaderName);
-        System.out.println(jwtProps.jwtHeaderName + " : " + token);
+//        System.out.println(jwtProps.jwtHeaderName + " : " + token);
 
         if (token == null || token.equals("")) {
             emptyTokenResponse(httpServletResponse);
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 AuthenticationToken authenticationToken = new AuthenticationToken(oAuth2Principal);
                 authenticationToken.setAuthenticated(true);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                System.out.println("SET AUTHENTICATION :: " + authenticationToken);
+                //System.out.println("SET AUTHENTICATION :: " + authenticationToken);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

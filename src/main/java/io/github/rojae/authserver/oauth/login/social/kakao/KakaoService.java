@@ -22,6 +22,9 @@ import io.github.rojae.authserver.persistence.RKakaoUserInfoRepository;
 import io.github.rojae.authserver.util.TimeUtils;
 import java.util.Map;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +34,11 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.Collections;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 @Service
 public class KakaoService extends SocialLoginServiceImpl {
 
-    Logger logger = Logger.getLogger(KakaoService.class.getName());
+    Logger logger = LoggerFactory.getLogger(KakaoService.class.getName());
 
     private final RestProvider restProvider;
     private final JwtProvider jwtProvider;
@@ -80,23 +82,23 @@ public class KakaoService extends SocialLoginServiceImpl {
 
     @Override
     public OAuth2LoginResponse login(String code, String reqUuid) {
-        logger.info(String.format("START KAKAO LOGIN :: CODE => %s", code));
+        logger.debug(String.format("START KAKAO LOGIN :: CODE => %s", code));
 
         // STEP 1 : KAKAO TOKEN
         ResponseEntity<KakaoTokenWrapper> tokenResponse = this.getKakaoToken(code);
-        logger.info(String.format("STEP 1 : KAKAO TOKEN => %s", tokenResponse.getBody()));
+        logger.debug(String.format("STEP 1 : KAKAO TOKEN => %s", tokenResponse.getBody()));
         // REDIS SAVE :: KAKAO TOKEN INFO
         rKakaoTokenInfoRepository.save(new RKakaoTokenInfo(reqUuid, tokenResponse.getBody().getToken_type(), tokenResponse.getBody().getAccess_token(), tokenResponse.getBody().getRefresh_token(), tokenResponse.getBody().getScope()));
         
         // STEP 2 : KAKAO USER INFO
         ResponseEntity<KakaoUserInfoWrapper> userInfoResponse =
                 this.getKakaoUserInfo(Objects.requireNonNull(tokenResponse.getBody()).getAccess_token());
-        logger.info(String.format("STEP 2 : KAKAO USER INFO => %s", userInfoResponse.getBody()));
+        logger.debug(String.format("STEP 2 : KAKAO USER INFO => %s", userInfoResponse.getBody()));
         // REDIS SAVE :: KAKAO USER INFO
         rKakaoUserInfoRepository.save(new RKakaoUserInfo(reqUuid, userInfoResponse.getBody().getId(), userInfoResponse.getBody().connected_at, userInfoResponse.getBody().getProperties(), userInfoResponse.getBody().kakao_account ));
 
         // STEP 3 : Generate JWT Token including User's Info
-        logger.info("STEP 3 : KAKAO JWT Login, Signup");
+        logger.debug("STEP 3 : KAKAO JWT Login, Signup");
 
         // Create User's Principal Data (토큰에 저장될 데이터)
         OAuth2Principal oAuth2Principal = this.principal(Objects.requireNonNull(userInfoResponse.getBody()));
@@ -107,7 +109,7 @@ public class KakaoService extends SocialLoginServiceImpl {
         // Set Response Object
         OAuth2LoginResponse oAuth2LoginResponse = this.response(userInfoResponse.getBody(), jwtToken);
 
-        logger.info(String.format("END KAKAO LOGIN :: CODE => %s", code));
+        logger.debug(String.format("END KAKAO LOGIN :: CODE => %s", code));
         return oAuth2LoginResponse;
     }
 
@@ -149,7 +151,7 @@ public class KakaoService extends SocialLoginServiceImpl {
         headers.addHeader("charset", "utf8");
 
         ResponseEntity<Map> response = restProvider.send(HttpMethod.POST, oAuth2Props.kakaoUnlinkUri, headers, Map.class);
-        logger.info(String.format("KAKAO UNLINK :: RESPONSE => %s", response));
+        logger.debug(String.format("KAKAO UNLINK :: RESPONSE => %s", response));
 
         if(!this.unlinkDB(token)){
             throw new DatabaseTransactionException();

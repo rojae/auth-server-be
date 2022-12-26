@@ -1,5 +1,7 @@
 package io.github.rojae.authserver.common.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -9,12 +11,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.logging.Logger;
-
 @Component
 public class RestProvider {
     private final RestTemplate restTemplate;
-    Logger logger = Logger.getLogger(RestProvider.class.getName());
+    Logger logger = LoggerFactory.getLogger(RestProvider.class.getName());
 
     public RestProvider(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -59,7 +59,7 @@ public class RestProvider {
         } else if (client.getMethod().equals(HttpMethod.DELETE)) {
             return restTemplate.exchange(client.getUrl(), HttpMethod.DELETE, client.toEntity(), responseClassType);
         } else {
-            logger.info(String.format("Not yet implement Method : %s ", client.getMethod()));
+            logger.debug(String.format("Not yet implement Method : %s ", client.getMethod()));
             return null;
         }
     }

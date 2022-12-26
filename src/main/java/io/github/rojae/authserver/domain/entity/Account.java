@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
-@Table(name = "TBL_ACCOUNT")
+@Table(name = "A_TBL_ACCOUNT")
 @Entity
 @DynamicUpdate
 public class Account extends TimeEntity {
