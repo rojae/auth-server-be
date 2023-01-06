@@ -36,6 +36,4 @@ public class JwtProps {
     @Value("${oauth2.jwt.crypt.iv}")
     public String jwtCryptIv;
 
-    @Value("${oauth2.jwt.logout-uri}")
-    public String logoutUri;
 }
