@@ -1,4 +1,4 @@
-package io.github.rojae.authcoreapi.common.enums;
+package io.github.rojae.oauth2api.common.enums;
 
 public enum PlatformType {
     NONSOCIAL("소셜 아님"),

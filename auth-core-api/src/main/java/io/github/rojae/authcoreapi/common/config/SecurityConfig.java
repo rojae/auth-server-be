@@ -33,6 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         String[] staticResources = {
+                "swagger-resources/**",
+                "v2/api-docs"
         };
 
         web.ignoring()

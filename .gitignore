@@ -35,3 +35,6 @@ mvnw
 mvnw.cmd
 .idea
 .mvn
+.lock
+.bin
+.probe
