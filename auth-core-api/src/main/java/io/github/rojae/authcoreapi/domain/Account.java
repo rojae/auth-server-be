@@ -3,9 +3,11 @@ package io.github.rojae.authcoreapi.domain;
 
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Table(name = "TBL_ACCOUNT")
 @Entity
@@ -55,6 +57,9 @@ public class Account extends TimeEntity {
 
     @Column(name = "reqUuid", nullable = false)
     private String reqUuid;
+
+    @Column(name = "lastLoginDate", nullable = true)
+    private LocalDateTime lastLoginDate;
 
     // 패스워드 암호화 기법
     public void encodePassword(PasswordEncoder passwordEncoder) {
@@ -131,5 +136,13 @@ public class Account extends TimeEntity {
 
     public void setEnable(char enable) {
         isEnable = enable;
+    }
+
+    public LocalDateTime getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(LocalDateTime lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
     }
 }

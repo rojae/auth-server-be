@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,6 +29,7 @@ public class LoginService {
             throw new LoginAccountInvalidException();
         } else if (passwordEncoder.matches(request.getPassword(), selectedAccount.getPassword())) {
             log.debug(String.format("SUCCESS LOGIN :: %s %s", request.getEmail(), request.getPlatformType()));
+            selectedAccount.setLastLoginDate(LocalDateTime.now());
         }
 
         return new LoginResponse(selectedAccount.getEmail(), selectedAccount.getName(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage());
