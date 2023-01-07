@@ -1,0 +1,7 @@
+rootProject.name = 'auth-server'
+include 'auth-core-api'
+include 'auth-oauth2-api'
+include 'auth-social-api'
+include 'auth-union-api'
+
+

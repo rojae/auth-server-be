@@ -1,0 +1,1 @@
+package io.github.rojae.socialapi.social.naver.dto;
