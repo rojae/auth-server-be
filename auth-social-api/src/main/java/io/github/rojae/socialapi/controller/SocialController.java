@@ -22,7 +22,7 @@ public class SocialController {
 
     @ApiOperation(value = "소셜 요청 정보 API", notes = "소셜 요청 정보 API")
     @GetMapping("/api/v1/social/client-info")
-    public ResponseEntity<ApiBase<ClientInfoResponse>> clientInfo(@RequestParam ClientInfoRequest request){
+    public ResponseEntity<ApiBase<ClientInfoResponse>> clientInfo(@RequestParam(value = "platformType") ClientInfoRequest request){
         return ResponseEntity.ok(new ApiBase<>(ApiCode.OK, clientInfoService.getClientInfo(request)));
     }
 
