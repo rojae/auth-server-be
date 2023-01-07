@@ -21,7 +21,7 @@ public class LoginService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public LoginResponse login(LoginRequest request) {
         Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuthAndPlatformType(request.getEmail(), 'Y', 'Y', PlatformType.valueOf(request.getPlatformType()));
 

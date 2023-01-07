@@ -1,7 +1,7 @@
-package io.github.rojae.authcoreapi.common.exception;
+package io.github.rojae.authunionapi.common.exception;
 
-import io.github.rojae.authcoreapi.common.enums.ApiCode;
-import io.github.rojae.authcoreapi.dto.ApiBase;
+import io.github.rojae.authunionapi.common.enums.ApiCode;
+import io.github.rojae.authunionapi.dto.ApiBase;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.support.WebExchangeBindException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
@@ -19,6 +20,17 @@ public class GlobalErrorHandler {
     // Validation Body
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ApiBase<Object>> handleResponseBodyError(MethodArgumentNotValidException ex) {
+        var error = ex.getBindingResult().getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .sorted()
+                .collect(Collectors.joining(", "));
+
+        return ResponseEntity.badRequest()
+                .body(new ApiBase<>(ApiCode.INVALID_BODY, error));
+    }
+
+    @ExceptionHandler({WebExchangeBindException.class})
+    public ResponseEntity<ApiBase<Object>> handleResponseBodyError(WebExchangeBindException ex) {
         var error = ex.getBindingResult().getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .sorted()
@@ -49,28 +61,18 @@ public class GlobalErrorHandler {
                 .body(new ApiBase<>(ApiCode.INVALID_QUERYSTRING_HEADER, e.getMessage()));
     }
 
-
-    ///////////////////////////////////////////
-    ////////////////// Signup //////////////////
-    ///////////////////////////////////////////
-
-    // Login
-    @ExceptionHandler(SignupAccountException.class)
-    public ResponseEntity<ApiBase<Object>> handleSignupAccountException(Throwable e) {
-        return ResponseEntity.ok()
-                .body(new ApiBase<>(ApiCode.SIGNUP_FAILED, e.getMessage()));
+    // Core API Exception //
+    @ExceptionHandler(CoreApiException.class)
+    public ResponseEntity<ApiBase<Object>> coreApiException(CoreApiException e) {
+        return ResponseEntity.badRequest()
+                .body(new ApiBase<>(ApiCode.COREAPI_ERROR, String.format("[%s] %s", e.getUrl(), e.getMessage())));
     }
 
-    ///////////////////////////////////////////
-    ////////////////// LOGIN //////////////////
-    ///////////////////////////////////////////
-
-    // Login
-    @ExceptionHandler(LoginAccountInvalidException.class)
-    public ResponseEntity<ApiBase<Object>> handleLoginAccountInvalidException(Throwable e) {
-        return ResponseEntity.ok()
-                .body(new ApiBase<>(ApiCode.LOGIN_ACCOUNT_INVALID, e.getMessage()));
+    // Social API Exception //
+    @ExceptionHandler(SocialApiException.class)
+    public ResponseEntity<ApiBase<Object>> socialApiException(SocialApiException e) {
+        return ResponseEntity.badRequest()
+                .body(new ApiBase<>(ApiCode.SOCIALAPI_ERROR, String.format("[%s] %s", e.getUrl(), e.getMessage())));
     }
-
 
 }
