@@ -2,6 +2,10 @@ package io.github.rojae.authunionapi.common.exception;
 
 import io.github.rojae.authunionapi.common.enums.ApiCode;
 import io.github.rojae.authunionapi.dto.ApiBase;
+import net.gpedro.integrations.slack.SlackApi;
+import net.gpedro.integrations.slack.SlackAttachment;
+import net.gpedro.integrations.slack.SlackMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,10 +16,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
 import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class GlobalErrorHandler {
+public class GlobalErrorHandler extends GlobalErrorNotification{
+
+    @ExceptionHandler({Exception.class})
+    public void exceptionHandler(Exception e){
+        this.notification(e);
+    }
 
     // Validation Body
     @ExceptionHandler({MethodArgumentNotValidException.class})
@@ -64,13 +74,23 @@ public class GlobalErrorHandler {
     // Core API Exception //
     @ExceptionHandler(CoreApiException.class)
     public ResponseEntity<ApiBase<Object>> coreApiException(CoreApiException e) {
+        this.notification(e);
         return ResponseEntity.badRequest()
                 .body(new ApiBase<>(ApiCode.COREAPI_ERROR, String.format("[%s] %s", e.getUrl(), e.getMessage())));
+    }
+
+    // OAuth2 API Exception //
+    @ExceptionHandler(OAuth2ApiException.class)
+    public ResponseEntity<ApiBase<Object>> oauth2ApiException(OAuth2ApiException e){
+        this.notification(e);
+        return ResponseEntity.badRequest()
+                .body(new ApiBase<>(ApiCode.OAUTH2API_ERROR, String.format("[%s] %s", e.getUrl(), e.getMessage())));
     }
 
     // Social API Exception //
     @ExceptionHandler(SocialApiException.class)
     public ResponseEntity<ApiBase<Object>> socialApiException(SocialApiException e) {
+        this.notification(e);
         return ResponseEntity.badRequest()
                 .body(new ApiBase<>(ApiCode.SOCIALAPI_ERROR, String.format("[%s] %s", e.getUrl(), e.getMessage())));
     }
