@@ -19,31 +19,11 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class GlobalErrorHandler {
-
-    @Value("${server.name}")
-    private String serverName;
-    @Value("${logging.slack.botName}")
-    private String botName;
-    @Value("${logging.slack.webhook}")
-    private String slackWebhook;
+public class GlobalErrorHandler extends GlobalErrorNotification{
 
     @ExceptionHandler({Exception.class})
-    public void notification(Exception e){
-        SlackApi slackApi = new SlackApi(slackWebhook);
-        var slackAttachment = new SlackAttachment();
-        slackAttachment.setFallback("Error");
-        slackAttachment.setTitle("Error Detect");
-        slackAttachment.setText(e.getMessage());
-        slackAttachment.setColor("danger");
-
-        var slackMessage = new SlackMessage();
-        slackMessage.setAttachments(Collections.singletonList(slackAttachment));
-        slackMessage.setIcon(":ghost:");
-        slackMessage.setText(serverName);
-        slackMessage.setUsername(botName);
-
-        slackApi.call(slackMessage);
+    public void exceptionHandler(Exception e){
+        this.notification(e);
     }
 
     // Validation Body
