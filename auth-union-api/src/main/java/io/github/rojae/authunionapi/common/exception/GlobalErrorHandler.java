@@ -24,6 +24,7 @@ public class GlobalErrorHandler extends GlobalErrorNotification{
 
     @ExceptionHandler({Exception.class})
     public void exceptionHandler(Exception e){
+        e.printStackTrace();
         this.notification(e);
     }
 
