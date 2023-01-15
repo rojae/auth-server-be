@@ -5,20 +5,15 @@ import io.github.rojae.authunionapi.api.OAuth2ApiClient;
 import io.github.rojae.authunionapi.api.SocialApiClient;
 import io.github.rojae.authunionapi.api.coreapi.dto.*;
 import io.github.rojae.authunionapi.api.oauth2api.dto.OAuth2TokenPublishRequest;
-import io.github.rojae.authunionapi.api.oauth2api.dto.OAuth2TokenPublishResponse;
 import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiClientInfoRequest;
 import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiClientInfoResponse;
 import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiLoginResponse;
 import io.github.rojae.authunionapi.common.enums.ApiCode;
 import io.github.rojae.authunionapi.common.enums.PlatformType;
-import io.github.rojae.authunionapi.common.valid.PlatformTypeValid;
 import io.github.rojae.authunionapi.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
-import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Service
@@ -81,4 +76,11 @@ public class UnionService {
         });
     }
 
+    public Mono<ApiBase<ProfileInfoResponse>> myProfile(String token) {
+        // 1. oauth2 api를 통한 사용자 데이터 가져오기 -> (이메일, 플랫폼)
+        // 2. core api를 통한, 프로필 데이터 가져오기
+        return oAuth2ApiClient.getDetail(token)
+                .flatMap(d -> coreApiClient.profile(new CoreApiProfileInfoRequest(d.getData().getEmail(), d.getData().getPlatformType()))
+                    .flatMap(dd -> Mono.just(new ApiBase<>(ApiCode.ofCode(dd.getCode()), new ProfileInfoResponse(dd.getData().getName(), dd.getData().getEmail(), dd.getData().getPlatformType(), dd.getData().getProfileImage(), dd.getData().isAuth(), dd.getData().isEnable(), dd.getData().getLastLoginDate())))));
+    }
 }

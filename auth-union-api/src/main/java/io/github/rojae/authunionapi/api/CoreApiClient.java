@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -45,4 +46,18 @@ public class CoreApiClient {
                 .bodyToMono(new ParameterizedTypeReference<ApiBase<CoreApiLoginResponse>>() {})
                 .onErrorResume(s -> Mono.error(new CoreApiException(String.format("%s (%s)", "유저 조회에 실패했습니다.", s.getMessage()), urlProps.coreApiExistCheckUrl)));
     }
+
+    public Mono<ApiBase<CoreApiProfileInfoResponse>> profile(CoreApiProfileInfoRequest request){
+        var url = UriComponentsBuilder.fromHttpUrl(urlProps.coreApiProfileUrl)
+                .queryParam("email", request.getEmail())
+                .queryParam("platformType", request.getPlatformType())
+                .buildAndExpand().toString();
+
+        return webClient.get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ApiBase<CoreApiProfileInfoResponse>>() {})
+                .onErrorResume(s -> Mono.error(new CoreApiException(String.format("%s (%s)", "유저 프로필 조회에 실패했습니다.", s.getMessage()), urlProps.coreApiProfileUrl)));
+    }
+
 }

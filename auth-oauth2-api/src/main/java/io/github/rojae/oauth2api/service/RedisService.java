@@ -72,4 +72,14 @@ public class RedisService {
                 }
         );
     }
+
+    @Transactional(readOnly = true)
+    public OAuth2Principal getDetail(String token) {
+        OAuth2Principal oAuth2Principal = jwtService.toPrincipal(token);
+        Optional<RAccount> tokenInfo = accountRedisRepository.findById(RAccount.idFormat(oAuth2Principal.getPlatformType(), oAuth2Principal.getEmail()));
+        if(tokenInfo.isPresent())
+            return oAuth2Principal;
+        else
+            return null;
+    }
 }

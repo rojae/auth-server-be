@@ -1,10 +1,10 @@
 package io.github.rojae.authunionapi.api;
 
-import io.github.rojae.authunionapi.api.coreapi.dto.CoreApiSignupResponse;
+import io.github.rojae.authunionapi.api.oauth2api.dto.OAuth2ProfileInfoResponse;
 import io.github.rojae.authunionapi.api.oauth2api.dto.OAuth2TokenPublishRequest;
 import io.github.rojae.authunionapi.api.oauth2api.dto.OAuth2TokenPublishResponse;
-import io.github.rojae.authunionapi.common.exception.CoreApiException;
 import io.github.rojae.authunionapi.common.exception.OAuth2ApiException;
+import io.github.rojae.authunionapi.common.props.JwtProps;
 import io.github.rojae.authunionapi.common.props.UrlProps;
 import io.github.rojae.authunionapi.dto.ApiBase;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +38,15 @@ public class OAuth2ApiClient {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Void>() {})
                 .onErrorResume(s -> Mono.error(new OAuth2ApiException(String.format("%s (%s)", "토큰 제거에 실패했습니다.", s.getMessage()), urlProps.oauth2ApiTokenDropUrl)));
+    }
+
+    public Mono<ApiBase<OAuth2ProfileInfoResponse>> getDetail(String token){
+        return webClient.get()
+                .uri(urlProps.oauth2ApiTokenDetailUrl)
+                .header(JwtProps.AUTHORIZATION_HEADER, token)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ApiBase<OAuth2ProfileInfoResponse>>() {})
+                .onErrorResume(s -> Mono.error(new OAuth2ApiException(String.format("%s (%s)", "토큰 정보 상세 조회에 실패했습니다.", s.getMessage()), urlProps.oauth2ApiTokenDetailUrl)));
     }
 
 }

@@ -1,5 +1,6 @@
 package io.github.rojae.authunionapi.controller;
 
+import io.github.rojae.authunionapi.common.props.JwtProps;
 import io.github.rojae.authunionapi.dto.*;
 import io.github.rojae.authunionapi.service.UnionService;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,12 @@ public class UnionController {
     @GetMapping("/api/v1/auth/login/social/kakao")
     public Mono<ResponseEntity<ApiBase<LoginResponse>>> kakaoLogin(@Valid @RequestParam(value = "code") @NotBlank(message = "code cannot be empty value") String code) {
         return unionService.kakaoLogin(code).map(ResponseEntity::ok);
+    }
+
+    @GetMapping("/api/v1/my-profile")
+    public Mono<ResponseEntity<ApiBase<ProfileInfoResponse>>> myProfile(@RequestHeader(value = JwtProps.AUTHORIZATION_HEADER)
+                                                                            @NotBlank(message = "Authorization can not be empty")
+                                                                            String token){
+        return unionService.myProfile(token).map(ResponseEntity::ok);
     }
 }
