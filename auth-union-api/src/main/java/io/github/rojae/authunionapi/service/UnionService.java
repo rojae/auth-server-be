@@ -78,9 +78,16 @@ public class UnionService {
 
     public Mono<ApiBase<ProfileInfoResponse>> myProfile(String token) {
         // 1. oauth2 api를 통한 사용자 데이터 가져오기 -> (이메일, 플랫폼)
-        // 2. core api를 통한, 프로필 데이터 가져오기
         return oAuth2ApiClient.getDetail(token)
-                .flatMap(d -> coreApiClient.profile(new CoreApiProfileInfoRequest(d.getData().getEmail(), d.getData().getPlatformType()))
-                    .flatMap(dd -> Mono.just(new ApiBase<>(ApiCode.ofCode(dd.getCode()), new ProfileInfoResponse(dd.getData().getName(), dd.getData().getEmail(), dd.getData().getPlatformType(), dd.getData().getProfileImage(), dd.getData().isAuth(), dd.getData().isEnable(), dd.getData().getLastLoginDate())))));
+                .flatMap(d -> {
+                    // 2. core api를 통한, 프로필 데이터 가져오기
+                    if(ApiCode.OK == ApiCode.ofCode(d.getCode())) {
+                        return coreApiClient.profile(new CoreApiProfileInfoRequest(d.getData().getEmail(), d.getData().getPlatformType()))
+                                .flatMap(dd -> Mono.just(new ApiBase<>(ApiCode.ofCode(dd.getCode()), new ProfileInfoResponse(dd.getData().getName(), dd.getData().getEmail(), dd.getData().getPlatformType(), dd.getData().getProfileImage(), dd.getData().isAuth(), dd.getData().isEnable(), dd.getData().getLastLoginDate()))));
+                    }
+                    else {
+                        return Mono.just(new ApiBase<>(ApiCode.ofCode(d.getCode()), new ProfileInfoResponse()));
+                    }
+                });
     }
 }
