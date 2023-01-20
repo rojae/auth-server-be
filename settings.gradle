@@ -1,4 +1,4 @@
-rootProject.name = 'auth-server'
+rootProject.name = 'auth-server-be'
 include 'auth-core-api'
 include 'auth-oauth2-api'
 include 'auth-social-api'
