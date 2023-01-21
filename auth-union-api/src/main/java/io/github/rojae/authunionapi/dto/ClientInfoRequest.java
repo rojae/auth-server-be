@@ -17,4 +17,5 @@ public class ClientInfoRequest {
     @NotBlank(message = "유효한 platformType이(가) 아닙니다.")
     @PlatformTypeValid
     private String platformType;
+
 }

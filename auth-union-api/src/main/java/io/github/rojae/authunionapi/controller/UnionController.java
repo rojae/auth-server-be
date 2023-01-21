@@ -23,8 +23,8 @@ public class UnionController {
     }
 
     @GetMapping("/api/v1/auth/client-info")
-    public Mono<ResponseEntity<ApiBase<ClientInfoResponse>>> clientInfo(@Valid @RequestParam(value = "platformType") ClientInfoRequest request){
-        return unionService.clientInfo(request).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<ApiBase<ClientInfoResponse>>> clientInfo(@Valid @RequestParam(value = "platformType") String platformType){
+        return unionService.clientInfo(platformType).map(ResponseEntity::ok);
     }
 
     @PostMapping("/api/v1/auth/login/nonsocial")
