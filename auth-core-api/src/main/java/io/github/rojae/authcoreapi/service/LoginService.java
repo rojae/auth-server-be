@@ -25,13 +25,13 @@ public class LoginService {
     public LoginResponse login(LoginRequest request) {
         Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuthAndPlatformType(request.getEmail(), 'Y', 'Y', PlatformType.valueOf(request.getPlatformType()));
 
-        if (selectedAccount == null) {
-            throw new LoginAccountInvalidException();
-        } else if (passwordEncoder.matches(request.getPassword(), selectedAccount.getPassword())) {
+        if (selectedAccount != null && passwordEncoder.matches(request.getPassword(), selectedAccount.getPassword())) {
             log.debug(String.format("SUCCESS LOGIN :: %s %s", request.getEmail(), request.getPlatformType()));
             selectedAccount.setLastLoginDate(LocalDateTime.now());
+            return new LoginResponse(selectedAccount.getEmail(), selectedAccount.getName(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage());
         }
-
-        return new LoginResponse(selectedAccount.getEmail(), selectedAccount.getName(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage());
+        else{
+            throw new LoginAccountInvalidException();
+        }
     }
 }
