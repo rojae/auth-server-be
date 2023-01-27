@@ -26,7 +26,7 @@ public class SocialApiClient {
     private final UrlProps urlProps;
 
     public Mono<ApiBase<SocialApiClientInfoResponse>> clientInfo(SocialApiClientInfoRequest request) {
-        var url = UriComponentsBuilder.fromHttpUrl(urlProps.socialApiClientInfoUrl)
+        var url = UriComponentsBuilder.fromHttpUrl(urlProps.socialApi + urlProps.socialApiClientInfoUrl)
                 .queryParam("platformType", request.getPlatformType())
                 .buildAndExpand().toString();
 
@@ -38,7 +38,7 @@ public class SocialApiClient {
     }
 
     public Mono<ApiBase<SocialApiLoginResponse>> login(String code) {
-        var url = UriComponentsBuilder.fromHttpUrl(urlProps.socialApiLoginUrl)
+        var url = UriComponentsBuilder.fromHttpUrl(urlProps.socialApi + urlProps.socialApiLoginUrl)
                 .queryParam("code", code)
                 .buildAndExpand().toString();
 

@@ -24,7 +24,7 @@ public class OAuth2ApiClient {
 
     public Mono<ApiBase<OAuth2TokenPublishResponse>> tokenPublish(OAuth2TokenPublishRequest request){
         return webClient.post()
-                .uri(urlProps.oauth2ApiTokenPublishUrl)
+                .uri(urlProps.oauth2Api + urlProps.oauth2ApiTokenPublishUrl)
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ApiBase<OAuth2TokenPublishResponse>>() {})
@@ -33,7 +33,7 @@ public class OAuth2ApiClient {
 
     public Mono<Void> tokenDrop(OAuth2TokenPublishRequest request){
         return webClient.post()
-                .uri(urlProps.oauth2ApiTokenDropUrl)
+                .uri(urlProps.oauth2Api + urlProps.oauth2ApiTokenDropUrl)
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Void>() {})
@@ -42,7 +42,7 @@ public class OAuth2ApiClient {
 
     public Mono<ApiBase<OAuth2ProfileInfoResponse>> getDetail(String token){
         return webClient.get()
-                .uri(urlProps.oauth2ApiTokenDetailUrl)
+                .uri(urlProps.oauth2Api + urlProps.oauth2ApiTokenDetailUrl)
                 .header(JwtProps.AUTHORIZATION_HEADER, token)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ApiBase<OAuth2ProfileInfoResponse>>() {})

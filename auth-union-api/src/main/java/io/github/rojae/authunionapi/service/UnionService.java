@@ -32,8 +32,8 @@ public class UnionService {
         });
     }
 
-    public Mono<ApiBase<ClientInfoResponse>> clientInfo(ClientInfoRequest request) {
-        Mono<ApiBase<SocialApiClientInfoResponse>> socialResponse = socialApiClient.clientInfo(new SocialApiClientInfoRequest(request.getPlatformType()));
+    public Mono<ApiBase<ClientInfoResponse>> clientInfo(String platformType) {
+        Mono<ApiBase<SocialApiClientInfoResponse>> socialResponse = socialApiClient.clientInfo(new SocialApiClientInfoRequest(platformType));
         return socialResponse.flatMap(r -> {
             ClientInfoResponse clientInfoResponse = new ClientInfoResponse(r.getData().getUri(), r.getData().getClientId(), r.getData().getRedirectUri(), r.getData().getResponseType(), r.getData().getTotal());
             return Mono.just(new ApiBase<ClientInfoResponse>().setResponse(r.getCode(), r.getReason(), clientInfoResponse));
