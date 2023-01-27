@@ -33,13 +33,13 @@ public class Account extends TimeEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255)") //CHARACTER SET UTF8"
+    @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET UTF8") //CHARACTER SET UTF8"
     private String name;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET UTF8")
     private String email;
 
     @Column(name = "isAuth", nullable = false, columnDefinition = "CHAR(1)", length = 1) //  DEFAULT 'N'
