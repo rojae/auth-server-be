@@ -26,4 +26,7 @@ public class OAuth2Service {
         redisService.deleteRedis(token);
     }
 
+    public OAuth2Principal getDetail(String token) {
+        return redisService.getDetail(token);
+    }
 }

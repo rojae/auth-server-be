@@ -10,10 +10,7 @@ import io.github.rojae.oauth2api.service.OAuth2Service;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -40,6 +37,18 @@ public class OAuth2Controller {
                                                  String token){
         oAuth2Service.deleteToken(token);
         return ResponseEntity.ok(new ApiBase<>(ApiCode.OK));
+    }
+
+    @ApiOperation(value = "사용자 데이터 추출", notes = "사용자 데이터 추출 API")
+    @GetMapping("/api/v1/oauth2/detail")
+    public ResponseEntity<ApiBase<OAuth2Principal>> getDetail(@RequestHeader(value = JwtProps.AUTHORIZATION_HEADER)
+                                                              @NotBlank(message = "Authorization can not be empty")
+                                                              String token){
+        OAuth2Principal principal = oAuth2Service.getDetail(token);
+        if(principal == null)
+            return ResponseEntity.ok(new ApiBase<>(ApiCode.NOTFOUND_PROFILE, new OAuth2Principal()));
+        else
+            return ResponseEntity.ok(new ApiBase<>(ApiCode.OK, principal));
     }
 
 }

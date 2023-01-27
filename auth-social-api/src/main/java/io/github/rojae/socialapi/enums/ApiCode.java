@@ -23,6 +23,14 @@ public enum ApiCode {
 
     AUTH_ACCOUNT_INVALID("A3003", "인증 가능한 회원정보가 없습니다"),
 
+    // PROFILE //
+    NOTFOUND_PROFILE("A3004", "조회가능한 프로필이 없습니다"),
+
+    // API //
+    COREAPI_ERROR("ERR-COREAPI", "Core API에 오류가 발생했습니다"),
+    OAUTH2API_ERROR("ERR-OAUTH2API", "OAuth2 API에 오류가 발생했습니다"),
+    SOCIALAPI_ERROR("ERR-SOCIALAPI", "Social API에 오류가 발생했습니다"),
+
     // UNKNOWN //
     UNKNOWN("UNKNOWN", "알 수 없음");
 
