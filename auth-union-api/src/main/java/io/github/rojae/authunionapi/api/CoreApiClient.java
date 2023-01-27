@@ -22,7 +22,7 @@ public class CoreApiClient {
 
     public Mono<ApiBase<CoreApiSignupResponse>> signup(CoreApiSignupRequest request){
         return webClient.post()
-                .uri(urlProps.coreApiSignupUrl)
+                .uri(urlProps.coreApi + urlProps.coreApiSignupUrl)
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ApiBase<CoreApiSignupResponse>>() {})
@@ -31,7 +31,7 @@ public class CoreApiClient {
 
     public Mono<ApiBase<CoreApiLoginResponse>> login(CoreApiLoginRequest request){
         return webClient.post()
-                .uri(urlProps.coreApiLoginUrl)
+                .uri(urlProps.coreApi + urlProps.coreApiLoginUrl)
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ApiBase<CoreApiLoginResponse>>() {})
@@ -40,7 +40,7 @@ public class CoreApiClient {
 
     public Mono<ApiBase<CoreApiLoginResponse>> isExist(CoreApiCheckExistUserRequest request){
         return webClient.post()
-                .uri(urlProps.coreApiExistCheckUrl)
+                .uri(urlProps.coreApi + urlProps.coreApiExistCheckUrl)
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ApiBase<CoreApiLoginResponse>>() {})
@@ -48,7 +48,7 @@ public class CoreApiClient {
     }
 
     public Mono<ApiBase<CoreApiProfileInfoResponse>> profile(CoreApiProfileInfoRequest request){
-        var url = UriComponentsBuilder.fromHttpUrl(urlProps.coreApiProfileUrl)
+        var url = UriComponentsBuilder.fromHttpUrl(urlProps.coreApi + urlProps.coreApiProfileUrl)
                 .queryParam("email", request.getEmail())
                 .queryParam("platformType", request.getPlatformType())
                 .buildAndExpand().toString();
