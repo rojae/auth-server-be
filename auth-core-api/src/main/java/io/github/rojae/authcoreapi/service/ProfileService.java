@@ -1,5 +1,6 @@
 package io.github.rojae.authcoreapi.service;
 
+import io.github.rojae.authcoreapi.common.aspect.LogExecutionTime;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.common.utils.DateUtils;
 import io.github.rojae.authcoreapi.domain.Account;
@@ -17,6 +18,7 @@ public class ProfileService {
 
     private final AccountRepository accountRepository;
 
+    @LogExecutionTime
     public ProfileInfoResponse profileInfo(ProfileInfoRequest request){
         Account selectedAccount = accountRepository.findByEmailAndPlatformType(request.getEmail(), PlatformType.valueOfName(request.getPlatformType()));
 

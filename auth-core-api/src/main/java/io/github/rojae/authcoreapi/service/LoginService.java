@@ -1,5 +1,6 @@
 package io.github.rojae.authcoreapi.service;
 
+import io.github.rojae.authcoreapi.common.aspect.LogExecutionTime;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.common.exception.LoginAccountInvalidException;
 import io.github.rojae.authcoreapi.domain.Account;
@@ -22,6 +23,7 @@ public class LoginService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = false)
+    @LogExecutionTime
     public LoginResponse login(LoginRequest request) {
         Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuthAndPlatformType(request.getEmail(), 'Y', 'Y', PlatformType.valueOf(request.getPlatformType()));
 

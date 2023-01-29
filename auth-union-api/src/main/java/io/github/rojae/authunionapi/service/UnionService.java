@@ -8,6 +8,7 @@ import io.github.rojae.authunionapi.api.oauth2api.dto.OAuth2TokenPublishRequest;
 import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiClientInfoRequest;
 import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiClientInfoResponse;
 import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiLoginResponse;
+import io.github.rojae.authunionapi.aspect.LogExecutionTime;
 import io.github.rojae.authunionapi.common.enums.ApiCode;
 import io.github.rojae.authunionapi.common.enums.PlatformType;
 import io.github.rojae.authunionapi.dto.*;
@@ -24,6 +25,7 @@ public class UnionService {
     private final OAuth2ApiClient oAuth2ApiClient;
     private final SocialApiClient socialApiClient;
 
+    @LogExecutionTime
     public Mono<ApiBase<SignupResponse>> signup(SignupRequest request) {
         Mono<ApiBase<CoreApiSignupResponse>> coreResponse = coreApiClient.signup(new CoreApiSignupRequest(request.getEmail(), request.getPassword(), request.getName(), request.getPlatformType(), request.getProfileImage()));
         return coreResponse.flatMap(r -> {
@@ -32,6 +34,7 @@ public class UnionService {
         });
     }
 
+    @LogExecutionTime
     public Mono<ApiBase<ClientInfoResponse>> clientInfo(String platformType) {
         Mono<ApiBase<SocialApiClientInfoResponse>> socialResponse = socialApiClient.clientInfo(new SocialApiClientInfoRequest(platformType));
         return socialResponse.flatMap(r -> {
@@ -40,6 +43,7 @@ public class UnionService {
         });
     }
 
+    @LogExecutionTime
     public Mono<ApiBase<LoginResponse>> nonSocialLogin(NonSocialLoginRequest request) {
         // 1. CORE API를 통한 RDB 조회
         Mono<ApiBase<CoreApiLoginResponse>> coreResponse = coreApiClient.login(new CoreApiLoginRequest(request.getEmail(), request.getPassword(), PlatformType.NONSOCIAL.name()));
@@ -55,6 +59,7 @@ public class UnionService {
         });
     }
 
+    @LogExecutionTime
     public Mono<ApiBase<LoginResponse>> kakaoLogin(String code) {
         // 1. Social API를 통한 로그인/가입 처리
         Mono<ApiBase<SocialApiLoginResponse>> socialResponse = socialApiClient.login(code);
@@ -76,6 +81,7 @@ public class UnionService {
         });
     }
 
+    @LogExecutionTime
     public Mono<ApiBase<ProfileInfoResponse>> myProfile(String token) {
         // 1. oauth2 api를 통한 사용자 데이터 가져오기 -> (이메일, 플랫폼)
         return oAuth2ApiClient.getDetail(token)

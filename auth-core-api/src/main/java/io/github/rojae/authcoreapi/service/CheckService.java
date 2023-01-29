@@ -1,5 +1,6 @@
 package io.github.rojae.authcoreapi.service;
 
+import io.github.rojae.authcoreapi.common.aspect.LogExecutionTime;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.domain.Account;
 import io.github.rojae.authcoreapi.dto.CheckExistUserRequest;
@@ -17,6 +18,7 @@ public class CheckService {
     private final AccountRepository accountRepository;
 
     @Transactional(readOnly = false)
+    @LogExecutionTime
     public boolean isExistUser(CheckExistUserRequest request){
         Account selectedAccount = accountRepository.findByEmailAndPlatformType(request.getEmail(), PlatformType.valueOfName(request.getPlatformType()));
         if(selectedAccount != null){
