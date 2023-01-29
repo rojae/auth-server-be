@@ -1,5 +1,6 @@
 package io.github.rojae.socialapi.service;
 
+import io.github.rojae.socialapi.aspect.LogExecutionTime;
 import io.github.rojae.socialapi.dto.LoginResponse;
 import io.github.rojae.socialapi.enums.PlatformType;
 import io.github.rojae.socialapi.social.kakao.KakaoApiClient;
@@ -8,16 +9,19 @@ import io.github.rojae.socialapi.social.kakao.dto.KakaoUserInfoWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class KakaoService {
 
     private final KakaoApiClient kakaoApiClient;
 
+    @LogExecutionTime
     public LoginResponse login(String code){
         KakaoTokenWrapper tokenWrapper = kakaoApiClient.getToken(code).getBody();
-        KakaoUserInfoWrapper userInfoWrapper = kakaoApiClient.getKakaoUserInfo(tokenWrapper.getAccess_token()).getBody();
-        return toResponse(userInfoWrapper);
+        KakaoUserInfoWrapper userInfoWrapper = kakaoApiClient.getKakaoUserInfo(Objects.requireNonNull(tokenWrapper).getAccess_token()).getBody();
+        return toResponse(Objects.requireNonNull(userInfoWrapper));
     }
 
 

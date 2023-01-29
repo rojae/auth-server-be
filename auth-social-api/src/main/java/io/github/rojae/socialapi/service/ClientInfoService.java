@@ -1,5 +1,6 @@
 package io.github.rojae.socialapi.service;
 
+import io.github.rojae.socialapi.aspect.LogExecutionTime;
 import io.github.rojae.socialapi.common.props.OAuth2Props;
 import io.github.rojae.socialapi.dto.ClientInfoRequest;
 import io.github.rojae.socialapi.dto.ClientInfoResponse;
@@ -13,6 +14,7 @@ public class ClientInfoService {
 
     private final OAuth2Props oAuth2Props;
 
+    @LogExecutionTime
     public ClientInfoResponse getClientInfo(ClientInfoRequest request){
         PlatformType platformType = PlatformType.valueOfName(request.getPlatformType());
 
