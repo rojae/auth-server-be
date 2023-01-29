@@ -1,5 +1,6 @@
 package io.github.rojae.authcoreapi.service;
 
+import io.github.rojae.authcoreapi.common.aspect.LogExecutionTime;
 import io.github.rojae.authcoreapi.common.enums.IsAuth;
 import io.github.rojae.authcoreapi.common.enums.IsEnable;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
@@ -21,6 +22,7 @@ public class SignupService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = false)
+    @LogExecutionTime
     public boolean signup(SignupRequest request) {
         try {
             accountRepository.save(new Account(request.getName(), passwordEncoder.encode(request.getPassword()), request.getEmail(), PlatformType.valueOf(request.getPlatformType()), request.getProfileImage(), "", IsEnable.Y.getYn(), IsAuth.Y.getYn()));
@@ -36,6 +38,7 @@ public class SignupService {
     }
 
     @Transactional(readOnly = true)
+    @LogExecutionTime
     public boolean isDuplicate(SignupRequest request) {
         return accountRepository.existsByEmailAndIsEnable(request.getEmail(), IsEnable.Y.getYn());
     }
