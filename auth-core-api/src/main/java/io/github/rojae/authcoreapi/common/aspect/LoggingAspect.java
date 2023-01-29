@@ -22,7 +22,7 @@ public class LoggingAspect {
 	@Value("${logging.warning-time-ms}")
 	private int warningTimeMs;
 
-	@Around("@annotation(com.gmarket.identity.common.LogExecutionTime)")
+	@Around("@annotation(io.github.rojae.authcoreapi.common.aspect.LogExecutionTime)")
 	public Object methodTimeLogger(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		long start = System.currentTimeMillis();
 
