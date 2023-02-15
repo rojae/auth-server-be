@@ -30,8 +30,8 @@ public class Account extends TimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @Column(name = "accountId", nullable = false)
+    private Long accountId;
 
     @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET UTF8") //CHARACTER SET UTF8"
     private String name;
@@ -66,12 +66,12 @@ public class Account extends TimeEntity {
         this.password = passwordEncoder.encode(this.password);
     }
 
-    public Long getId() {
-        return id;
+    public Long getAccountId() {
+        return accountId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public char getIsEnable() {
+        return isEnable;
     }
 
     public String getName() {
