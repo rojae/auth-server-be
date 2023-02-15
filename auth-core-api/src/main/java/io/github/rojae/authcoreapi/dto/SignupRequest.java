@@ -28,4 +28,13 @@ public class SignupRequest {
 
     @NotNull(message = "profileImage는 null이 될 수 없습니다.")
     private String profileImage;
+
+    ////////// CUSTOM INFO ///////////
+    private String birthDate;
+    private String gender;      // M, F
+    private String mobileTel1;
+    private String mobileTel2;
+    private String mobileTel3;
+
+    private String agreeRecvMail;   // Marketing Mail
 }

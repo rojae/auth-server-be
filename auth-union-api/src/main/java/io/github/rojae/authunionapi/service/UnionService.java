@@ -27,7 +27,11 @@ public class UnionService {
 
     @LogExecutionTime
     public Mono<ApiBase<SignupResponse>> signup(SignupRequest request) {
-        Mono<ApiBase<CoreApiSignupResponse>> coreResponse = coreApiClient.signup(new CoreApiSignupRequest(request.getEmail(), request.getPassword(), request.getName(), request.getPlatformType(), request.getProfileImage()));
+        Mono<ApiBase<CoreApiSignupResponse>> coreResponse = coreApiClient.signup(new CoreApiSignupRequest(
+                request.getEmail(), request.getPassword(), request.getName(), request.getPlatformType(), request.getProfileImage(),
+                request.getBirthDate(), request.getGender(), request.getMobileTel1(), request.getMobileTel2(), request.getMobileTel3(),
+                request.getAgreeRecvMail()
+        ));
         return coreResponse.flatMap(r -> {
             SignupResponse signupResponse = new SignupResponse(r.getData().getEmail(), r.getData().getName(), r.getData().getPlatformType());
             return Mono.just(new ApiBase<SignupResponse>().setResponse(r.getCode(), r.getReason(), signupResponse));

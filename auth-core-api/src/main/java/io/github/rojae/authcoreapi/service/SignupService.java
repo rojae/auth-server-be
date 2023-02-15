@@ -6,8 +6,10 @@ import io.github.rojae.authcoreapi.common.enums.IsEnable;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.common.exception.SignupAccountException;
 import io.github.rojae.authcoreapi.domain.Account;
+import io.github.rojae.authcoreapi.domain.Custom;
 import io.github.rojae.authcoreapi.dto.SignupRequest;
 import io.github.rojae.authcoreapi.persistence.AccountRepository;
+import io.github.rojae.authcoreapi.persistence.CustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class SignupService {
+    private final CustomRepository customRepository;
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -25,7 +28,14 @@ public class SignupService {
     @LogExecutionTime
     public boolean signup(SignupRequest request) {
         try {
-            accountRepository.save(new Account(request.getName(), passwordEncoder.encode(request.getPassword()), request.getEmail(), PlatformType.valueOf(request.getPlatformType()), request.getProfileImage(), "", IsEnable.Y.getYn(), IsAuth.Y.getYn()));
+            var newAccount = new Account(request.getName(), passwordEncoder.encode(request.getPassword()), request.getEmail(), PlatformType.valueOf(request.getPlatformType()), request.getProfileImage(), "", IsEnable.Y.getYn(), IsAuth.Y.getYn());
+            var newCustom = new Custom(newAccount, request.getBirthDate(), request.getGender(), request.getMobileTel1(), request.getMobileTel2(), request.getMobileTel3(), request.getAgreeRecvMail());
+
+            accountRepository.save(newAccount);
+
+            if(PlatformType.valueOf(request.getPlatformType()) != PlatformType.KAKAO)
+                customRepository.save(newCustom);
+
             return true;
         } catch (RuntimeException ex) {
             log.error(
