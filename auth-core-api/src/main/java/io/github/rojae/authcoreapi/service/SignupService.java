@@ -28,11 +28,13 @@ public class SignupService {
     @LogExecutionTime
     public boolean signup(SignupRequest request) {
         try {
-            var newAccount = new Account(request.getName(), passwordEncoder.encode(request.getPassword()), request.getEmail(), PlatformType.valueOf(request.getPlatformType()), request.getProfileImage(), "", IsEnable.Y.getYn(), IsAuth.Y.getYn());
-            var newCustom = new Custom(newAccount, request.getBirthDate(), request.getGender(), request.getMobileTel1(), request.getMobileTel2(), request.getMobileTel3(), request.getAgreeRecvMail());
+            var newAccount = new Account(request.getNickname(), passwordEncoder.encode(request.getPassword()), request.getEmail(), PlatformType.valueOf(request.getPlatformType()), request.getProfileImage(), "", IsEnable.Y.getYn(), IsAuth.Y.getYn());
+            var newCustom = new Custom(newAccount, request.getName(), request.getBirthDate(), request.getGender(), request.getMobileTel1(), request.getMobileTel2(), request.getMobileTel3(),
+                    request.getAgreePersonalInfo(), request.getAgreeAdult(), request.getAgreeRecvMail(), request.getAgreeRecvSms());
 
             accountRepository.save(newAccount);
 
+            // not implemented :: 소셜 로그인의 경우, 개인정보와 동의여부는 따로 받아야 함
             if(PlatformType.valueOf(request.getPlatformType()) != PlatformType.KAKAO)
                 customRepository.save(newCustom);
 

@@ -28,7 +28,7 @@ public class ProfileService {
         boolean isEnable = selectedAccount.getEnable() == 'Y';
         String lastLoginDate = DateUtils.toString(selectedAccount.getLastLoginDate());
 
-        return new ProfileInfoResponse(selectedAccount.getnickname(), selectedAccount.getEmail(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage(), isAuth, isEnable, lastLoginDate);
+        return new ProfileInfoResponse(selectedAccount.getEmail(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage(), isAuth, isEnable, lastLoginDate);
     }
 
 }

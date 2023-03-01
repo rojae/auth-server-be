@@ -26,7 +26,7 @@ public class SignupController {
         if(signupService.isDuplicate(request))
             return ResponseEntity.ok(new ApiBase<>(ApiCode.SIGNUP_DUPLICATE, new SignupResponse()));
         else if(signupService.signup(request))
-            return ResponseEntity.ok(new ApiBase<>(ApiCode.OK, new SignupResponse(request.getEmail(), request.getName(), request.getPlatformType())));
+            return ResponseEntity.ok(new ApiBase<>(ApiCode.OK, new SignupResponse(request.getEmail(), request.getNickname(), request.getPlatformType())));
         else
             return ResponseEntity.ok(new ApiBase<>(ApiCode.SIGNUP_FAILED, new SignupResponse()));
     }

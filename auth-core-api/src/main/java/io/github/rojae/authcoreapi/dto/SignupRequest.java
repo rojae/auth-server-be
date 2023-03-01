@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -13,14 +14,18 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Data
 public class SignupRequest {
+
+    @NotBlank(message = "name이(가) 유효하지 않습니다")
+    private String name;
+
     @NotBlank(message = "email이(가) 유효하지 않습니다")
     private String email;
 
     @NotBlank(message = "password이(가) 유효하지 않습니다")
     private String password;
 
-    @NotBlank(message = "name이(가) 유효하지 않습니다")
-    private String name;
+    @NotBlank(message = "nickname이(가) 유효하지 않습니다")
+    private String nickname;
 
     @NotBlank(message = "platformType이(가) 유효하지 않습니다")
     @PlatformTypeValid
@@ -36,5 +41,12 @@ public class SignupRequest {
     private String mobileTel2;
     private String mobileTel3;
 
-    private String agreeRecvMail;   // Marketing Mail
+    // 필수 약관
+    private String agreePersonalInfo;   // agreePersonalInfo (Y,N)
+    private String agreeAdult;   // agreePersonalInfo (Y,N)
+
+    // 선택 약관
+    private String agreeRecvMail;   // Marketing Mail (Y,N)
+    private String agreeRecvSms;   // Marketing SMS (Y,N)
+
 }

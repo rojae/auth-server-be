@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class ProfileInfoResponse {
-    private String nickname;
+//    private String nickname;
     private String email;
     private String platformType;
     private String profileImage;

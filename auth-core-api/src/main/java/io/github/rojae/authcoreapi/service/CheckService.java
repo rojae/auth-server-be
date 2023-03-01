@@ -7,6 +7,7 @@ import io.github.rojae.authcoreapi.dto.CheckEmailRequest;
 import io.github.rojae.authcoreapi.dto.CheckExistUserRequest;
 import io.github.rojae.authcoreapi.dto.CheckNicknameRequest;
 import io.github.rojae.authcoreapi.persistence.AccountRepository;
+import io.github.rojae.authcoreapi.persistence.CustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 public class CheckService {
 
     private final AccountRepository accountRepository;
+    private final CustomRepository customRepository;
 
     @Transactional(readOnly = false)
     @LogExecutionTime

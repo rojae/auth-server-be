@@ -74,14 +74,6 @@ public class Account extends TimeEntity {
         return isEnable;
     }
 
-    public String getnickname() {
-        return nickname;
-    }
-
-    public void setnickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     public String getPassword() {
         return password;
     }
