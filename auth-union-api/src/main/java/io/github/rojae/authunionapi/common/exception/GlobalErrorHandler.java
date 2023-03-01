@@ -98,7 +98,7 @@ public class GlobalErrorHandler extends GlobalErrorNotification{
 
     // SMTP API Exception //
     @ExceptionHandler(SmtpApiException.class)
-    public ResponseEntity<ApiBase<Object>> smtpApiException(SocialApiException e) {
+    public ResponseEntity<ApiBase<Object>> smtpApiException(SmtpApiException e) {
         this.notification(e);
         return ResponseEntity.badRequest()
                 .body(new ApiBase<>(ApiCode.SMTPAPI_ERROR, String.format("[%s] %s", e.getUrl(), e.getMessage())));
