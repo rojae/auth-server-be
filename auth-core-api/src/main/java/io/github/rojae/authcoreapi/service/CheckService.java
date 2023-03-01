@@ -3,7 +3,9 @@ package io.github.rojae.authcoreapi.service;
 import io.github.rojae.authcoreapi.common.aspect.LogExecutionTime;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.domain.Account;
+import io.github.rojae.authcoreapi.dto.CheckEmailRequest;
 import io.github.rojae.authcoreapi.dto.CheckExistUserRequest;
+import io.github.rojae.authcoreapi.dto.CheckNicknameRequest;
 import io.github.rojae.authcoreapi.persistence.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,4 +28,17 @@ public class CheckService {
         }
         return selectedAccount != null;
     }
+
+    @Transactional(readOnly = false)
+    @LogExecutionTime
+    public boolean duplicateEmail(CheckEmailRequest request) {
+        return accountRepository.existsByEmail(request.getEmail());
+    }
+
+    @Transactional(readOnly = false)
+    @LogExecutionTime
+    public boolean duplicateNickname(CheckNicknameRequest request) {
+        return accountRepository.existsByNickname(request.getNickname());
+    }
+
 }

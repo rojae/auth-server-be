@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import java.util.UUID;
+import java.util.stream.DoubleStream;
 
 @Service
 @RequiredArgsConstructor
@@ -99,5 +100,10 @@ public class UnionService {
                         return Mono.just(new ApiBase<>(ApiCode.ofCode(d.getCode()), new ProfileInfoResponse()));
                     }
                 });
+    }
+
+    @LogExecutionTime
+    public Mono<ApiBase<Object>> isExistUser(CheckExistUserRequest request) {
+        return coreApiClient.isExist(new CoreApiCheckExistUserRequest(request.getEmail(), request.getPlatformType()));
     }
 }

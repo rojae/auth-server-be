@@ -30,7 +30,7 @@ public class LoginService {
         if (selectedAccount != null && passwordEncoder.matches(request.getPassword(), selectedAccount.getPassword())) {
             log.debug(String.format("SUCCESS LOGIN :: %s %s", request.getEmail(), request.getPlatformType()));
             selectedAccount.setLastLoginDate(LocalDateTime.now());
-            return new LoginResponse(selectedAccount.getEmail(), selectedAccount.getName(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage());
+            return new LoginResponse(selectedAccount.getEmail(), selectedAccount.getnickname(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage());
         }
         else{
             throw new LoginAccountInvalidException();

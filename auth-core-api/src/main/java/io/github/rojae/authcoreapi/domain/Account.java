@@ -17,8 +17,8 @@ public class Account extends TimeEntity {
     public Account() {
     }
 
-    public Account(String name, String password, String email, PlatformType platformType, String profileImage, String reqUuid, char isEnable, char isAuth) {
-        this.name = name;
+    public Account(String nickname, String password, String email, PlatformType platformType, String profileImage, String reqUuid, char isEnable, char isAuth) {
+        this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.platformType = platformType;
@@ -33,8 +33,8 @@ public class Account extends TimeEntity {
     @Column(name = "accountId", nullable = false)
     private Long accountId;
 
-    @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET UTF8") //CHARACTER SET UTF8"
-    private String name;
+    @Column(name = "nickname", nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET UTF8") //CHARACTER SET UTF8"
+    private String nickname;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -74,12 +74,12 @@ public class Account extends TimeEntity {
         return isEnable;
     }
 
-    public String getName() {
-        return name;
+    public String getnickname() {
+        return nickname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setnickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getPassword() {

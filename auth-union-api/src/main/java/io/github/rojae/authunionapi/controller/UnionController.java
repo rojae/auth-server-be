@@ -17,6 +17,11 @@ public class UnionController {
 
     private final UnionService unionService;
 
+    @GetMapping("/api/v1/check/exist-user")
+    public Mono<ResponseEntity<ApiBase<Object>>> isExistUser(@Valid @RequestBody CheckExistUserRequest request){
+        return unionService.isExistUser(request).map(ResponseEntity::ok);
+    }
+
     @PostMapping("/api/v1/auth/signup/newuser")
     public Mono<ResponseEntity<ApiBase<SignupResponse>>> signup(@Valid @RequestBody SignupRequest request){
         return unionService.signup(request).map(ResponseEntity::ok);

@@ -38,12 +38,12 @@ public class CoreApiClient {
                 .onErrorResume(s -> Mono.error(new CoreApiException(String.format("%s (%s)", "로그인을 위한 통신에 실패했습니다.", s.getMessage()), urlProps.coreApiLoginUrl)));
     }
 
-    public Mono<ApiBase<CoreApiLoginResponse>> isExist(CoreApiCheckExistUserRequest request){
+    public Mono<ApiBase<Object>> isExist(CoreApiCheckExistUserRequest request){
         return webClient.post()
                 .uri(urlProps.coreApi + urlProps.coreApiExistCheckUrl)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ApiBase<CoreApiLoginResponse>>() {})
+                .bodyToMono(new ParameterizedTypeReference<ApiBase<Object>>() {})
                 .onErrorResume(s -> Mono.error(new CoreApiException(String.format("%s (%s)", "유저 조회에 실패했습니다.", s.getMessage()), urlProps.coreApiExistCheckUrl)));
     }
 
