@@ -46,4 +46,10 @@ public class UrlProps {
     @Value("${auth.socialapi.login.url}")
     public String socialApiLoginUrl;
 
+    // SMTP API //
+    @Value("${smtp.mailapi}")
+    public String smtpApi;
+
+    @Value("${smtp.mailapi.welcomeMail.url}")
+    public String welcomeMailUrl;
 }

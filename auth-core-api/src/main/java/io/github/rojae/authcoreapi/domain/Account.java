@@ -66,6 +66,10 @@ public class Account extends TimeEntity {
         this.password = passwordEncoder.encode(this.password);
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     public Long getAccountId() {
         return accountId;
     }
