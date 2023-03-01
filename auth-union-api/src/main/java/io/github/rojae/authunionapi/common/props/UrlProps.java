@@ -17,13 +17,16 @@ public class UrlProps {
     public String coreApiSignupUrl;
     @Value("${auth.coreapi.login.url}")
     public String coreApiLoginUrl;
-
     @Value("${auth.coreapi.logout.url}")
     public String coreApiLogoutUrl;
     @Value("${auth.coreapi.exist-check.url}")
     public String coreApiExistCheckUrl;
     @Value("${auth.coreapi.profile.url}")
     public String coreApiProfileUrl;
+    @Value("${auth.coreapi.check.duplicate.email.url}")
+    public String coreApiCheckDuplicateEmail;
+    @Value("${auth.coreapi.check.duplicate.nickname.url}")
+    public String coreApiCheckDuplicateNickname;
 
     // OAUTH2 API //
     @Value("${auth.oauth2api}")

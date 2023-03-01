@@ -20,6 +20,24 @@ public class CoreApiClient {
     private final WebClient webClient;
     private final UrlProps urlProps;
 
+    public Mono<ApiBase<Object>> isDuplicateEmail(CoreApiCheckDuplicateEmail request){
+        return webClient.post()
+                .uri(urlProps.coreApi + urlProps.coreApiCheckDuplicateEmail)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ApiBase<Object>>() {})
+                .onErrorResume(s -> Mono.error(new CoreApiException(String.format("%s (%s)", "이메일 중복체크를 위한 통신에 실패했습니다.", s.getMessage()), urlProps.coreApiSignupUrl)));
+    }
+
+    public Mono<ApiBase<Object>> isDuplicateNickname(CoreApiCheckDuplicateNickname request){
+        return webClient.post()
+                .uri(urlProps.coreApi + urlProps.coreApiCheckDuplicateNickname)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ApiBase<Object>>() {})
+                .onErrorResume(s -> Mono.error(new CoreApiException(String.format("%s (%s)", "닉네임 중복체크를 위한 통신에 실패했습니다.", s.getMessage()), urlProps.coreApiSignupUrl)));
+    }
+
     public Mono<ApiBase<CoreApiSignupResponse>> signup(CoreApiSignupRequest request){
         return webClient.post()
                 .uri(urlProps.coreApi + urlProps.coreApiSignupUrl)
