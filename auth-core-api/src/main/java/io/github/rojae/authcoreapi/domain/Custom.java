@@ -7,10 +7,11 @@ import javax.persistence.*;
 @Table(name = "TBL_CUSTOM")
 @Entity
 @DynamicUpdate
-public class Custom extends TimeEntity {
+public class Custom extends TimeMultiEntity {
     @Id
-    @Column(name = "accountId", nullable = false)
-    private Long accountId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "seq", nullable = false)
+    private Long seq;
 
     @OneToOne(fetch = FetchType.EAGER)
     @MapsId

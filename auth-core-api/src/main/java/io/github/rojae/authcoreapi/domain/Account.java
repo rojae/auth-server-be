@@ -3,7 +3,6 @@ package io.github.rojae.authcoreapi.domain;
 
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "TBL_ACCOUNT")
 @Entity
 @DynamicUpdate
-public class Account extends TimeEntity {
+public class Account extends TimeMultiEntity {
 
     public Account() {
     }
@@ -52,8 +51,8 @@ public class Account extends TimeEntity {
     @Column(name = "profileImage", nullable = true)
     private String profileImage;
 
-    @Column(name = "isEnable", nullable = false)
-    private char isEnable;
+    @Column(name = "isEnable", nullable = false, columnDefinition = "CHAR(1)", length = 1) //  DEFAULT 'Y'
+    private char isEnable = 'Y';
 
     @Column(name = "reqUuid", nullable = false)
     private String reqUuid;
