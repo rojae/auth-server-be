@@ -6,8 +6,10 @@ import io.github.rojae.authcoreapi.common.enums.IsEnable;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.common.exception.SignupAccountException;
 import io.github.rojae.authcoreapi.domain.Account;
+import io.github.rojae.authcoreapi.domain.AccountLoginHistory;
 import io.github.rojae.authcoreapi.domain.Custom;
 import io.github.rojae.authcoreapi.dto.SignupRequest;
+import io.github.rojae.authcoreapi.persistence.AccountLoginHistoryRepository;
 import io.github.rojae.authcoreapi.persistence.AccountRepository;
 import io.github.rojae.authcoreapi.persistence.CustomRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SignupService {
     private final CustomRepository customRepository;
     private final AccountRepository accountRepository;
+    private final AccountLoginHistoryRepository accountLoginHistoryRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = false)
@@ -37,6 +40,13 @@ public class SignupService {
             // not implemented :: 소셜 로그인의 경우, 개인정보와 동의여부는 따로 받아야 함
             if(PlatformType.valueOf(request.getPlatformType()) != PlatformType.KAKAO)
                 customRepository.save(newCustom);
+
+            // kakao의 경우, 가입과 동시에 로그인 (수정예정)
+            // save login history
+            if(PlatformType.valueOf(request.getPlatformType()) == PlatformType.KAKAO){
+                AccountLoginHistory loginHistory = new AccountLoginHistory(newAccount.getAccountId(), newAccount.getLastLoginDate());
+                accountLoginHistoryRepository.save(loginHistory);
+            }
 
             return true;
         } catch (RuntimeException ex) {
