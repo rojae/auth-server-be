@@ -56,6 +56,15 @@ public class CoreApiClient {
                 .onErrorResume(s -> Mono.error(new CoreApiException(String.format("%s (%s)", "로그인을 위한 통신에 실패했습니다.", s.getMessage()), urlProps.coreApiLoginUrl)));
     }
 
+    public Mono<ApiBase<Object>> loginHistory(CoreApiLoginHistoryRequest request){
+        return webClient.post()
+                .uri(urlProps.coreApi + urlProps.coreApiLoginHistoryUrl)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ApiBase<Object>>() {})
+                .onErrorResume(s -> Mono.error(new CoreApiException(String.format("%s (%s)", "로그인 히스토리 저장을 위한 통신에 실패했습니다.", s.getMessage()), urlProps.coreApiLoginHistoryUrl)));
+    }
+
     public Mono<ApiBase<Object>> isExist(CoreApiCheckExistUserRequest request){
         return webClient.post()
                 .uri(urlProps.coreApi + urlProps.coreApiExistCheckUrl)

@@ -5,6 +5,7 @@ import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.common.exception.LoginAccountInvalidException;
 import io.github.rojae.authcoreapi.domain.Account;
 import io.github.rojae.authcoreapi.domain.AccountLoginHistory;
+import io.github.rojae.authcoreapi.dto.LoginHistoryRequest;
 import io.github.rojae.authcoreapi.dto.LoginRequest;
 import io.github.rojae.authcoreapi.dto.LoginResponse;
 import io.github.rojae.authcoreapi.persistence.AccountLoginHistoryRepository;
@@ -46,4 +47,19 @@ public class LoginService {
             throw new LoginAccountInvalidException();
         }
     }
+
+    @Transactional(readOnly = false)
+    @LogExecutionTime
+    public void loginHistory(LoginHistoryRequest request){
+        Account selectedAccount = accountRepository.findByEmailAndIsEnableAndIsAuthAndPlatformType(request.getEmail(), 'Y', 'Y', PlatformType.valueOf(request.getPlatformType()));
+        if(selectedAccount != null){
+            // update last_login_date
+            selectedAccount.setLastLoginDate(LocalDateTime.now());
+
+            // save login history
+            AccountLoginHistory loginHistory = new AccountLoginHistory(selectedAccount.getAccountId(), selectedAccount.getLastLoginDate());
+            accountLoginHistoryRepository.save(loginHistory);
+        }
+    }
+
 }

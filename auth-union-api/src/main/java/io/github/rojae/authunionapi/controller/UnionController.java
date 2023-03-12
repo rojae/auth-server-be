@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,7 +40,8 @@ public class UnionController {
 
     @GetMapping("/api/v1/auth/login/social/kakao")
     public Mono<ResponseEntity<ApiBase<LoginResponse>>> kakaoLogin(@Valid @RequestParam(value = "code") @NotBlank(message = "code cannot be empty value") String code) {
-        return unionService.kakaoLogin(code).map(ResponseEntity::ok);
+        return unionService.kakaoLogin(code).map(ResponseEntity::ok)
+                .doOnNext(r -> unionService.loginHistory(Objects.requireNonNull(r.getBody()).getData()));
     }
 
     @GetMapping("/api/v1/my-profile")

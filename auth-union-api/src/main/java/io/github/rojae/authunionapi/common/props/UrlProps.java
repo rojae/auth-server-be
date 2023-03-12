@@ -17,6 +17,8 @@ public class UrlProps {
     public String coreApiSignupUrl;
     @Value("${auth.coreapi.login.url}")
     public String coreApiLoginUrl;
+    @Value("${auth.coreapi.login-history.url}")
+    public String coreApiLoginHistoryUrl;
     @Value("${auth.coreapi.logout.url}")
     public String coreApiLogoutUrl;
     @Value("${auth.coreapi.exist-check.url}")

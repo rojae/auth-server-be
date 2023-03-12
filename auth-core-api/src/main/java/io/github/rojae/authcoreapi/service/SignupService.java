@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -41,13 +43,7 @@ public class SignupService {
             if(PlatformType.valueOf(request.getPlatformType()) != PlatformType.KAKAO)
                 customRepository.save(newCustom);
 
-            // kakao의 경우, 가입과 동시에 로그인 (수정예정)
-            // save login history
-            if(PlatformType.valueOf(request.getPlatformType()) == PlatformType.KAKAO){
-                AccountLoginHistory loginHistory = new AccountLoginHistory(newAccount.getAccountId(), newAccount.getLastLoginDate());
-                accountLoginHistoryRepository.save(loginHistory);
-            }
-
+            // kakao의 경우, 가입과 동시에 로그인함 -> 로그인 히스토리 저장 (unionapi에서 수행)
             return true;
         } catch (RuntimeException ex) {
             log.error(

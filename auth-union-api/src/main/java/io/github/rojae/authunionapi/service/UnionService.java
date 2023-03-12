@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import java.util.UUID;
-import java.util.stream.DoubleStream;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +96,12 @@ public class UnionService {
                 });
             }
         });
+    }
+
+    @LogExecutionTime
+    public void loginHistory(LoginResponse loginResponse){
+        // 소셜 로그인에 성공했다면, 히스토리 저장
+        coreApiClient.loginHistory(new CoreApiLoginHistoryRequest(loginResponse.getEmail(), loginResponse.getPlatformType())).subscribe();
     }
 
     @LogExecutionTime
