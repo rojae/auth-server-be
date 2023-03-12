@@ -30,6 +30,8 @@ public enum ApiCode {
     COREAPI_ERROR("ERR-COREAPI", "Core API에 오류가 발생했습니다"),
     OAUTH2API_ERROR("ERR-OAUTH2API", "OAuth2 API에 오류가 발생했습니다"),
     SOCIALAPI_ERROR("ERR-SOCIALAPI", "Social API에 오류가 발생했습니다"),
+    SMTPAPI_ERROR("ERR-SMTPAPI", "SMTP API에 오류가 발생했습니다"),
+
 
     // UNKNOWN //
     UNKNOWN("UNKNOWN", "알 수 없음");

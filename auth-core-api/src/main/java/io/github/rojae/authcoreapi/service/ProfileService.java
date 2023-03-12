@@ -4,6 +4,7 @@ import io.github.rojae.authcoreapi.common.aspect.LogExecutionTime;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.common.utils.DateUtils;
 import io.github.rojae.authcoreapi.domain.Account;
+import io.github.rojae.authcoreapi.domain.AccountInfoHistory;
 import io.github.rojae.authcoreapi.dto.ProfileInfoRequest;
 import io.github.rojae.authcoreapi.dto.ProfileInfoResponse;
 import io.github.rojae.authcoreapi.persistence.AccountRepository;
@@ -28,7 +29,15 @@ public class ProfileService {
         boolean isEnable = selectedAccount.getEnable() == 'Y';
         String lastLoginDate = DateUtils.toString(selectedAccount.getLastLoginDate());
 
-        return new ProfileInfoResponse(selectedAccount.getName(), selectedAccount.getEmail(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage(), isAuth, isEnable, lastLoginDate);
+        return new ProfileInfoResponse(selectedAccount.getEmail(), selectedAccount.getPlatformType().name(), selectedAccount.getProfileImage(), isAuth, isEnable, lastLoginDate);
     }
+
+//    TODO :: Save AccountInfoHistory table
+//    AccountInfoHistory infoHistory = new AccountInfoHistory(
+//            postAccount.getAccountId(), postAccount.getNickname(), postAccount.getPassword(),
+//            postAccount.getEmail(), postAccount.getIsAuth(), postAccount.getPlatformType(), postAccount.getProfileImage(),
+//            postAccount.getIsEnable(), postAccount.getReqUuid()
+//    );
+//    accountInfoHistoryRepository.save(infoHistory);
 
 }

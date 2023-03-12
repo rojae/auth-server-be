@@ -10,12 +10,18 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
 public class UnionController {
 
     private final UnionService unionService;
+
+    @GetMapping("/api/v1/check/exist-user")
+    public Mono<ResponseEntity<ApiBase<Object>>> isExistUser(@Valid @RequestBody CheckExistUserRequest request){
+        return unionService.isExistUser(request).map(ResponseEntity::ok);
+    }
 
     @PostMapping("/api/v1/auth/signup/newuser")
     public Mono<ResponseEntity<ApiBase<SignupResponse>>> signup(@Valid @RequestBody SignupRequest request){
@@ -34,7 +40,8 @@ public class UnionController {
 
     @GetMapping("/api/v1/auth/login/social/kakao")
     public Mono<ResponseEntity<ApiBase<LoginResponse>>> kakaoLogin(@Valid @RequestParam(value = "code") @NotBlank(message = "code cannot be empty value") String code) {
-        return unionService.kakaoLogin(code).map(ResponseEntity::ok);
+        return unionService.kakaoLogin(code).map(ResponseEntity::ok)
+                .doOnNext(r -> unionService.loginHistory(Objects.requireNonNull(r.getBody()).getData()));
     }
 
     @GetMapping("/api/v1/my-profile")

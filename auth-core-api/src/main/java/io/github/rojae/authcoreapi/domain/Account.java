@@ -3,7 +3,6 @@ package io.github.rojae.authcoreapi.domain;
 
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -12,13 +11,13 @@ import java.time.LocalDateTime;
 @Table(name = "TBL_ACCOUNT")
 @Entity
 @DynamicUpdate
-public class Account extends TimeEntity {
+public class Account extends TimeMultiEntity {
 
     public Account() {
     }
 
-    public Account(String name, String password, String email, PlatformType platformType, String profileImage, String reqUuid, char isEnable, char isAuth) {
-        this.name = name;
+    public Account(String nickname, String password, String email, PlatformType platformType, String profileImage, String reqUuid, char isEnable, char isAuth) {
+        this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.platformType = platformType;
@@ -33,8 +32,8 @@ public class Account extends TimeEntity {
     @Column(name = "accountId", nullable = false)
     private Long accountId;
 
-    @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET UTF8") //CHARACTER SET UTF8"
-    private String name;
+    @Column(name = "nickname", nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET UTF8") //CHARACTER SET UTF8"
+    private String nickname;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -52,8 +51,8 @@ public class Account extends TimeEntity {
     @Column(name = "profileImage", nullable = true)
     private String profileImage;
 
-    @Column(name = "isEnable", nullable = false)
-    private char isEnable;
+    @Column(name = "isEnable", nullable = false, columnDefinition = "CHAR(1)", length = 1) //  DEFAULT 'Y'
+    private char isEnable = 'Y';
 
     @Column(name = "reqUuid", nullable = false)
     private String reqUuid;
@@ -66,20 +65,16 @@ public class Account extends TimeEntity {
         this.password = passwordEncoder.encode(this.password);
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     public Long getAccountId() {
         return accountId;
     }
 
     public char getIsEnable() {
         return isEnable;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPassword() {

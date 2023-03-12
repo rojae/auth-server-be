@@ -1,10 +1,7 @@
 package io.github.rojae.authcoreapi.controller;
 
 import io.github.rojae.authcoreapi.common.enums.ApiCode;
-import io.github.rojae.authcoreapi.dto.ApiBase;
-import io.github.rojae.authcoreapi.dto.LoginRequest;
-import io.github.rojae.authcoreapi.dto.LoginResponse;
-import io.github.rojae.authcoreapi.dto.SignupResponse;
+import io.github.rojae.authcoreapi.dto.*;
 import io.github.rojae.authcoreapi.service.LoginService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +27,16 @@ public class LoginOutController {
         return ResponseEntity.ok(new ApiBase<>(ApiCode.OK, response));
     }
 
+    @PostMapping("/api/v1/login/history")
+    @ApiOperation(value = "소셜 로그인 히스토리 저장", notes = "email, platformType을 통한 사용자 로그인 히스토리 저장")
+    public ResponseEntity<ApiBase<Object>> loginHistory(@Valid @RequestBody LoginHistoryRequest request){
+        loginService.loginHistory(request);
+        return ResponseEntity.ok((new ApiBase<>(ApiCode.OK, null)));
+    }
+
     @GetMapping("/api/v1/login/oauth2/logout")
     @ApiOperation(value = "사용자 로그아웃 (로그아웃)", notes = "로그아웃 시간을 갱신하며, 후속처리를 진행합니다.")
     public String logout(){
         return "logout ok";
     }
-
 }

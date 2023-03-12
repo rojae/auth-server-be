@@ -6,8 +6,10 @@ import io.github.rojae.authcoreapi.common.enums.IsEnable;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.common.exception.SignupAccountException;
 import io.github.rojae.authcoreapi.domain.Account;
+import io.github.rojae.authcoreapi.domain.AccountLoginHistory;
 import io.github.rojae.authcoreapi.domain.Custom;
 import io.github.rojae.authcoreapi.dto.SignupRequest;
+import io.github.rojae.authcoreapi.persistence.AccountLoginHistoryRepository;
 import io.github.rojae.authcoreapi.persistence.AccountRepository;
 import io.github.rojae.authcoreapi.persistence.CustomRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,26 +18,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SignupService {
     private final CustomRepository customRepository;
     private final AccountRepository accountRepository;
+    private final AccountLoginHistoryRepository accountLoginHistoryRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = false)
     @LogExecutionTime
     public boolean signup(SignupRequest request) {
         try {
-            var newAccount = new Account(request.getName(), passwordEncoder.encode(request.getPassword()), request.getEmail(), PlatformType.valueOf(request.getPlatformType()), request.getProfileImage(), "", IsEnable.Y.getYn(), IsAuth.Y.getYn());
-            var newCustom = new Custom(newAccount, request.getBirthDate(), request.getGender(), request.getMobileTel1(), request.getMobileTel2(), request.getMobileTel3(), request.getAgreeRecvMail());
+            var newAccount = new Account(request.getNickname(), passwordEncoder.encode(request.getPassword()), request.getEmail(), PlatformType.valueOf(request.getPlatformType()), request.getProfileImage(), "", IsEnable.Y.getYn(), IsAuth.Y.getYn());
+            var newCustom = new Custom(newAccount, request.getName(), request.getBirthDate(), request.getGender(), request.getMobileTel1(), request.getMobileTel2(), request.getMobileTel3(),
+                    request.getAgreePersonalInfo(), request.getAgreeAdult(), request.getAgreeRecvMail(), request.getAgreeRecvSms());
 
             accountRepository.save(newAccount);
 
+            // not implemented :: 소셜 로그인의 경우, 개인정보와 동의여부는 따로 받아야 함
             if(PlatformType.valueOf(request.getPlatformType()) != PlatformType.KAKAO)
                 customRepository.save(newCustom);
 
+            // kakao의 경우, 가입과 동시에 로그인함 -> 로그인 히스토리 저장 (unionapi에서 수행)
             return true;
         } catch (RuntimeException ex) {
             log.error(

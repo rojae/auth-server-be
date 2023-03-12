@@ -12,14 +12,17 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignupRequest {
+    @NotBlank(message = "name이(가) 유효하지 않습니다")
+    private String name;
+
     @NotBlank(message = "email이(가) 유효하지 않습니다")
     private String email;
 
     @NotBlank(message = "password이(가) 유효하지 않습니다")
     private String password;
 
-    @NotBlank(message = "name이(가) 유효하지 않습니다")
-    private String name;
+    @NotBlank(message = "nickname이(가) 유효하지 않습니다")
+    private String nickname;
 
     @NotBlank(message = "platformType이(가) 유효하지 않습니다")
     @PlatformTypeValid
@@ -35,5 +38,11 @@ public class SignupRequest {
     private String mobileTel2;
     private String mobileTel3;
 
-    private String agreeRecvMail;   // Marketing Mail
+    // 필수약관
+    private String agreePersonalInfo;   // agreePersonalInfo (Y,N)
+    private String agreeAdult;   // agreePersonalInfo (Y,N)
+
+    // 선택약관
+    private String agreeRecvMail;   // Marketing Mail (Y,N)
+    private String agreeRecvSms;   // Marketing SMS
 }
