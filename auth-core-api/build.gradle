@@ -18,8 +18,8 @@ repositories {
     mavenCentral()
 }
 
-tasks.named('jar') {
-    enabled = true
+jar {
+    enabled = false
 }
 
 dependencies {
