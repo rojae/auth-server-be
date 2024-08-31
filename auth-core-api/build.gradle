@@ -8,10 +8,6 @@ group = 'io.github.rojae'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-tasks.named('jar') {
-    enabled = true
-}
-
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
