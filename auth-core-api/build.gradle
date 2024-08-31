@@ -18,11 +18,11 @@ repositories {
     mavenCentral()
 }
 
-jar {
-    enabled = true
-    archiveFileName = 'app.jar'
-    destinationDirectory.set(file("${buildDir}/libs"))
-}
+//jar {
+//    enabled = true
+//    archiveFileName = 'app.jar'
+//    destinationDirectory.set(file("${buildDir}/libs"))
+//}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
