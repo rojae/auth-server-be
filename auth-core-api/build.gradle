@@ -21,7 +21,7 @@ repositories {
 jar {
     enabled = true
     archiveFileName = 'app.jar'
-    destinationDirectory.set(file("${buildDir}/"))
+    destinationDirectory.set(file("${buildDir}/libs"))
 }
 
 dependencies {
