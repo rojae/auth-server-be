@@ -1,19 +1,19 @@
 package io.github.rojae.authunionapi.controller;
 
 import io.github.rojae.authunionapi.api.CoreApiClient;
-import io.github.rojae.authunionapi.api.coreapi.dto.CoreApiCheckDuplicateEmail;
-import io.github.rojae.authunionapi.api.coreapi.dto.CoreApiCheckDuplicateNickname;
-import io.github.rojae.authunionapi.dto.ApiBase;
-import io.github.rojae.authunionapi.dto.CheckDuplicateEmail;
-import io.github.rojae.authunionapi.dto.CheckDuplicateNickname;
+import kr.github.rojae.data.common.ApiBase;
+import kr.github.rojae.data.io.overmind.CheckDuplicateEmail;
+import kr.github.rojae.data.io.overmind.CheckDuplicateNickname;
+import kr.github.rojae.data.io.core.CoreApiCheckDuplicateEmail;
+import kr.github.rojae.data.io.core.CoreApiCheckDuplicateNickname;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import reactor.core.publisher.Mono;
 
 @Controller
 @RequiredArgsConstructor

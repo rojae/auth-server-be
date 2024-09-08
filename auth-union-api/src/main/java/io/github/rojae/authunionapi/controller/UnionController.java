@@ -1,8 +1,15 @@
 package io.github.rojae.authunionapi.controller;
 
 import io.github.rojae.authunionapi.common.props.JwtProps;
-import io.github.rojae.authunionapi.dto.*;
 import io.github.rojae.authunionapi.service.UnionService;
+import kr.github.rojae.data.common.ApiBase;
+import kr.github.rojae.data.io.overmind.CheckExistUserRequest;
+import kr.github.rojae.data.io.overmind.ClientInfoResponse;
+import kr.github.rojae.data.io.overmind.LoginResponse;
+import kr.github.rojae.data.io.overmind.NonSocialLoginRequest;
+import kr.github.rojae.data.io.overmind.ProfileInfoResponse;
+import kr.github.rojae.data.io.overmind.SignupRequest;
+import kr.github.rojae.data.io.overmind.SignupResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

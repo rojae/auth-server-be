@@ -1,14 +1,11 @@
 package io.github.rojae.authunionapi.api;
 
-import io.github.rojae.authunionapi.api.coreapi.dto.CoreApiSignupRequest;
-import io.github.rojae.authunionapi.api.coreapi.dto.CoreApiSignupResponse;
-import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiClientInfoRequest;
-import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiClientInfoResponse;
-import io.github.rojae.authunionapi.api.socialapi.dto.SocialApiLoginResponse;
-import io.github.rojae.authunionapi.common.exception.CoreApiException;
 import io.github.rojae.authunionapi.common.exception.SocialApiException;
 import io.github.rojae.authunionapi.common.props.UrlProps;
-import io.github.rojae.authunionapi.dto.ApiBase;
+import kr.github.rojae.data.common.ApiBase;
+import kr.github.rojae.data.io.social.SocialApiClientInfoRequest;
+import kr.github.rojae.data.io.social.SocialApiClientInfoResponse;
+import kr.github.rojae.data.io.social.SocialApiLoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;

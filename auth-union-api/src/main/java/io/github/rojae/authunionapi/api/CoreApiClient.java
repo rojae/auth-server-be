@@ -1,9 +1,18 @@
 package io.github.rojae.authunionapi.api;
 
-import io.github.rojae.authunionapi.api.coreapi.dto.*;
 import io.github.rojae.authunionapi.common.props.UrlProps;
-import io.github.rojae.authunionapi.dto.ApiBase;
 import io.github.rojae.authunionapi.common.exception.CoreApiException;
+import kr.github.rojae.data.common.ApiBase;
+import kr.github.rojae.data.io.core.CoreApiCheckDuplicateEmail;
+import kr.github.rojae.data.io.core.CoreApiCheckDuplicateNickname;
+import kr.github.rojae.data.io.core.CoreApiCheckExistUserRequest;
+import kr.github.rojae.data.io.core.CoreApiLoginHistoryRequest;
+import kr.github.rojae.data.io.core.CoreApiLoginRequest;
+import kr.github.rojae.data.io.core.CoreApiLoginResponse;
+import kr.github.rojae.data.io.core.CoreApiProfileInfoRequest;
+import kr.github.rojae.data.io.core.CoreApiProfileInfoResponse;
+import kr.github.rojae.data.io.core.CoreApiSignupRequest;
+import kr.github.rojae.data.io.core.CoreApiSignupResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
