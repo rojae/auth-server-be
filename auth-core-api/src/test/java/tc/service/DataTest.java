@@ -63,11 +63,10 @@ public class DataTest {
         easyRandom = new EasyRandom(parameters);
     }
 
-
     @Test
     @DisplayName("사용자 중복체크 - init.sql's database insert test")
     public void test() {
-        // KAKAO
+        // NONSOCIAL
         PlatformType platformType = PlatformType.NONSOCIAL;
 
         // Request Data 생성
@@ -83,7 +82,7 @@ public class DataTest {
     @Test
     @DisplayName("사용자 중복체크 - init.sql's database insert test")
     public void test2() {
-        // KAKAO
+        // NONSOCIAL
         PlatformType platformType = PlatformType.NONSOCIAL;
 
         // Request Data 생성
