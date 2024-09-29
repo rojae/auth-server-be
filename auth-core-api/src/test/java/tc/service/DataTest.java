@@ -4,33 +4,34 @@ import io.github.rojae.authcoreapi.AuthCoreApiApplication;
 import io.github.rojae.authcoreapi.common.enums.PlatformType;
 import io.github.rojae.authcoreapi.dto.CheckExistUserRequest;
 import io.github.rojae.authcoreapi.service.CheckService;
+import org.jeasy.random.FieldPredicates;
+import org.jeasy.random.ObjectCreationException;
+import org.jeasy.random.randomizers.misc.EnumRandomizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.Spy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import randomizer.EmailRandomizer;
+import randomizer.PlatformTypeRandomizer;
 import tc.mariadb.MariadbContainer;
 
+import static org.jeasy.random.TypePredicates.named;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)      // FOR TC
@@ -60,6 +61,25 @@ public class DataTest {
                 .seed(123L)
                 .ignoreRandomizationErrors(true);
         easyRandom = new EasyRandom(parameters);
+    }
+
+    @Test
+    public void createUserRequest(){
+        // EasyRandomParameters로 특정 필드 커스터마이즈
+        EasyRandomParameters parameters = new EasyRandomParameters()
+                .randomize(FieldPredicates.named("email"), new EmailRandomizer())
+                .randomize(FieldPredicates.named("platformType"), new PlatformTypeRandomizer());
+
+        // EasyRandom 객체 생성
+        EasyRandom easyRandom = new EasyRandom(parameters);
+
+        try {
+            CheckExistUserRequest request = easyRandom.nextObject(CheckExistUserRequest.class);
+            System.out.println(request);
+        }
+        catch (ObjectCreationException e) {
+            e.printStackTrace(); // 에러의 원인과 스택 트레이스를 확인
+        }
     }
 
     @Test
