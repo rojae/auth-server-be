@@ -63,24 +63,6 @@ public class DataTest {
         easyRandom = new EasyRandom(parameters);
     }
 
-    @Test
-    public void createUserRequest(){
-        // EasyRandomParameters로 특정 필드 커스터마이즈
-        EasyRandomParameters parameters = new EasyRandomParameters()
-                .randomize(FieldPredicates.named("email"), new EmailRandomizer())
-                .randomize(FieldPredicates.named("platformType"), new PlatformTypeRandomizer());
-
-        // EasyRandom 객체 생성
-        EasyRandom easyRandom = new EasyRandom(parameters);
-
-        try {
-            CheckExistUserRequest request = easyRandom.nextObject(CheckExistUserRequest.class);
-            System.out.println(request);
-        }
-        catch (ObjectCreationException e) {
-            e.printStackTrace(); // 에러의 원인과 스택 트레이스를 확인
-        }
-    }
 
     @Test
     @DisplayName("사용자 중복체크 - init.sql's database insert test")
