@@ -30,9 +30,6 @@ public class CheckServiceMockRepeatTest {
 
     private final String email = "test@email.com";
 
-    private static final int TOTAL_REQUESTS = 100; // 총 요청 수
-    private static final int THREAD_COUNT = 10; // 동시 실행 스레드 수
-
     @RepeatedTest(value = 1000, name = "{displayName} : {currentRepetition}/{totalRepetitions}")
     @DisplayName("isExist TPS Test - 1")
     public void isExistUser1() {
