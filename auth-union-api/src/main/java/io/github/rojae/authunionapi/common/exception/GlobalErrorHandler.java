@@ -1,11 +1,7 @@
 package io.github.rojae.authunionapi.common.exception;
 
-import io.github.rojae.authunionapi.common.enums.ApiCode;
-import io.github.rojae.authunionapi.dto.ApiBase;
-import net.gpedro.integrations.slack.SlackApi;
-import net.gpedro.integrations.slack.SlackAttachment;
-import net.gpedro.integrations.slack.SlackMessage;
-import org.springframework.beans.factory.annotation.Value;
+import kr.github.rojae.data.common.ApiBase;
+import kr.github.rojae.data.common.ApiCode;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @ControllerAdvice

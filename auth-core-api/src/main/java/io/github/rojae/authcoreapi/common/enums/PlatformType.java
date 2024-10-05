@@ -13,7 +13,7 @@ public enum PlatformType {
 
     public static PlatformType valueOfName(String name){
         for(var e : PlatformType.values()){
-            if(e.name().equals(name)){
+            if(e.name().toUpperCase().equals(name)){
                 return e;
             }
         }

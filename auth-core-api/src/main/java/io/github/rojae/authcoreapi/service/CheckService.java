@@ -11,6 +11,7 @@ import io.github.rojae.authcoreapi.persistence.CustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,9 @@ public class CheckService {
     @Transactional(readOnly = false)
     @LogExecutionTime
     public boolean isExistUser(CheckExistUserRequest request){
+        if(StringUtils.isEmpty(request.getEmail()) || PlatformType.valueOf(request.getPlatformType()) == PlatformType.UNKNOWN){
+            throw new RuntimeException("파리미터가 비어있습니다");
+        }
         Account selectedAccount = accountRepository.findByEmailAndPlatformType(request.getEmail(), PlatformType.valueOfName(request.getPlatformType()));
         if(selectedAccount != null){
             selectedAccount.setLastLoginDate(LocalDateTime.now());  // 로그인 절차이기 때문에, 업데이트 처리..

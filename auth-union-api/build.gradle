@@ -41,6 +41,9 @@ dependencies {
     // prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // common-data
+    implementation project(':auth-common-data')
 }
 
 tasks.named('test') {

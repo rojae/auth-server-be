@@ -1,9 +1,9 @@
 package io.github.rojae.authunionapi.api;
 
-import io.github.rojae.authunionapi.api.smtpapi.dto.MailRequestDto;
 import io.github.rojae.authunionapi.common.exception.SmtpApiException;
 import io.github.rojae.authunionapi.common.props.UrlProps;
-import io.github.rojae.authunionapi.dto.ApiBase;
+import kr.github.rojae.data.common.ApiBase;
+import kr.github.rojae.data.io.smtp.MailRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
