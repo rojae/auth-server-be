@@ -10,3 +10,7 @@
 
 ## 앞으로 계획
 - 리팩토링 개발, 블로그에 개발 시리즈 제공
+
+## 참고
+- 모니터링 : https://github.com/rojae/auth-server-prometheus
+
